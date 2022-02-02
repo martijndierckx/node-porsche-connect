@@ -1,0 +1,10 @@
+example
+node_modules
+.editorconfig
+.eslintignore
+.eslintrc.json
+.gitignore
+.git
+.DS_Store
+.vscode
+.prettierrc

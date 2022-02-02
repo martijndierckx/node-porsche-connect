@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Current TS File",
+      "type": "pwa-node",
+      "request": "launch",
+      "args": ["${relativeFile}", "-p", "${workspaceFolder}/tsconfig.json"],
+      "runtimeArgs": ["-r", "./node_modules/ts-node/register/transpile-only", "--nolazy"],
+      "cwd": "${workspaceRoot}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env",
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**", "node_modules/**"],
+      "env": {
+        "DEBUG": "*"
+      }
+    }
+  ]
+}
