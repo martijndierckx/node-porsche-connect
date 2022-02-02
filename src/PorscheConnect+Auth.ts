@@ -1,39 +1,95 @@
-import axios from 'axios';
-import type { Application, Auth } from './Enums';
+import * as Crypto from 'crypto';
+import { ApiAuthorization } from './ApiAuthorization';
+import type { Application } from './Enums';
 import { PorscheConnectBase } from './PorscheConnectBase';
+
+export class WrongCredentialsError extends Error {}
+export class PorscheAuthError extends Error {}
 
 export class PorscheConnectAuth extends PorscheConnectBase {
   protected isAuthorized(app: Application): boolean {
     if (this.auths[app] === undefined) return false;
-    if (this.auths[app].expired) return false;
+    if (this.auths[app].isExpired) return false;
 
     return true;
   }
 
-  protected async authIfRequired(app: Application): Promise<Auth> {
+  protected async authIfRequired(app: Application): Promise<ApiAuthorization> {
     if (!this.isAuthorized(app)) {
       // TODO: auth
-      this.auth(app);
+      await this.auth(app);
     }
 
     return this.auths[app];
   }
 
   private async auth(app: Application) {
-    const loginToRetrieveCookiesResponse = await this.loginToRetrieveCookies();
-    const apiAuthCodeResult = await this.getApiAuthCode(app);
-    const apiTokenResult = await getApiToken(app, apiAuthCodeResult.codeVerifier, apiAuthCodeResult.code);
-    this.auths[app] = apiTokenResult.data;
+    await this.loginToRetrieveCookies();
+    const { apiAuthCode, codeVerifier } = await this.getApiAuthCode(app);
+    this.auths[app] = await this.getApiToken(app, apiAuthCode, codeVerifier);
   }
 
   private async loginToRetrieveCookies() {
     const loginBody = { username: this.username, password: this.password, keeploggedin: 'false', sec: '', resume: '', thirdPartyId: '', state: '' };
     const formBody = this.buildPostFormBody(loginBody);
     try {
-      const result = await axios.post(this.routes.loginAuthUrl, loginBody, { maxRedirects: 0 });
-      console.log(result);
+      const result = await this.client.post(this.routes.loginAuthUrl, formBody, { maxRedirects: 30 });
+      if (result.headers['cdn-original-uri'] && result.headers['cdn-original-uri'].includes('state=WRONG_CREDENTIALS')) {
+        throw new WrongCredentialsError();
+      }
     } catch (e) {
-      console.log(e);
+      throw new PorscheAuthError();
+    }
+  }
+
+  private async getApiAuthCode(app: Application): Promise<{ apiAuthCode: string; codeVerifier: string }> {
+    const codeVerifier = Crypto.randomBytes(32).toString('hex');
+    const codeVerifierSha = Crypto.createHash('sha256').update(codeVerifier).digest('base64');
+    const codeChallenge = codeVerifierSha.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+
+    try {
+      const result = await this.client.get(this.routes.apiAuthURL, {
+        params: {
+          client_id: app,
+          redirect_uri: this.getRedirectUrlForApp(app),
+          code_challenge: codeChallenge,
+          scope: 'openid',
+          response_type: 'code',
+          access_type: 'offline',
+          prompt: 'none',
+          code_challenge_method: 'S256'
+        }
+      });
+      const url = new URL(result.headers['cdn-original-uri'], 'http://127.0.0.1');
+      const apiAuthCode = url.searchParams.get('code');
+
+      return { apiAuthCode, codeVerifier };
+    } catch (e) {
+      throw new PorscheAuthError();
+    }
+  }
+
+  private async getApiToken(app: Application, code: string, codeVerifier: string): Promise<ApiAuthorization> {
+    const apiTokenBody = {
+      client_id: app,
+      redirect_uri: this.getRedirectUrlForApp(app),
+      code: code,
+      code_verifier: codeVerifier,
+      prompt: 'none',
+      grant_type: 'authorization_code'
+    };
+    const formBody = this.buildPostFormBody(apiTokenBody);
+
+    try {
+      const result = await this.client.post(this.routes.apiTokenURL, formBody);
+      if (result.data.access_token && result.data.id_token && result.data.expires_in) {
+        const auth = new ApiAuthorization(result.data.access_token, result.data.id_token, parseInt(result.data.expires_in));
+        return auth;
+      } else {
+        throw new PorscheAuthError();
+      }
+    } catch (e) {
+      throw new PorscheAuthError();
     }
   }
 }

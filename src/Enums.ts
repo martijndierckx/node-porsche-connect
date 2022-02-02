@@ -1,11 +1,11 @@
 import type { URL } from 'url';
 
-export enum Environment {
+export enum Country {
   Ireland = 'ie',
   Germany = 'de'
 }
 
-export enum EnvironmentLanguage {
+export enum Language {
   Ireland = 'en',
   Germany = 'de'
 }
@@ -13,13 +13,7 @@ export enum EnvironmentLanguage {
 export type PorscheConnectConfig = {
   username: string;
   password: string;
-  environment?: Environment;
-};
-
-export type Auth = {
-  accessToken: string;
-  expired: boolean;
-  apiKey: string;
+  environment?: Country;
 };
 
 export enum Application {

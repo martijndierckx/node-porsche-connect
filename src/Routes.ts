@@ -1,27 +1,29 @@
-import type { Environment } from '.';
+import type { Country, Language } from '.';
 import type { Vehicle } from './Vehicle';
 
 export class Routes {
-  private environment: Environment;
+  private country: Country;
+  private language: Language;
 
-  public constructor(environment: Environment) {
-    this.environment = environment;
+  public constructor(country: Country, language: Language) {
+    this.country = country;
+    this.language = language;
   }
 
   public get loginAuthUrl(): string {
-    return `https://login.porsche.com/auth/api/v1/${this.environment}/public/login`;
+    return `https://login.porsche.com/auth/api/v1/${this.country}/${this.country}_${this.language.toUpperCase()}/public/login`;
   }
 
   public get apiAuthURL(): string {
     return 'https://login.porsche.com/as/authorization.oauth2';
   }
 
-  public get piTokenURL(): string {
+  public get apiTokenURL(): string {
     return 'https://login.porsche.com/as/token.oauth2';
   }
 
   public get vehiclesURL(): string {
-    return `https://api.porsche.com/core/api/v3/${this.environment}/vehicles`;
+    return `https://api.porsche.com/core/api/v3/${this.country}/vehicles`;
   }
 
   public vehicleSummaryURL(vehicle: Vehicle): string {
@@ -37,6 +39,6 @@ export class Routes {
   }
 
   public vehicleEmobilityURL(vehicle: Vehicle): string {
-    return `https://api.porsche.com/service-vehicle/${this.environment}/e-mobility/${vehicle.capabilities.carModel}/${vehicle.vin}?timezone=Europe/Dublin`;
+    return `https://api.porsche.com/service-vehicle/${this.country}/e-mobility/${vehicle.capabilities.carModel}/${vehicle.vin}?timezone=Europe/Dublin`;
   }
 }

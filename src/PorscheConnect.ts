@@ -9,13 +9,17 @@ export class PorscheConnect extends PorscheConnectBase {
     const app = Application.Portal;
     const auth = await this.authIfRequired(app);
 
-    const headers = this.buildRequestHeaders({
+    const headers = this.buildApiRequestHeaders({
       accessToken: auth.accessToken,
       apiKey: auth.apiKey
     });
 
-    let result = await axios.get(this.routes.vehiclesURL, { headers: headers });
-    console.log(result);
+    try {
+      let result = await axios.get(this.routes.vehiclesURL, { headers: headers });
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
     return null;
   }
 }
