@@ -59,7 +59,7 @@ const tripInfo = await taycan.getTripInfo();
 ```
 
 ## Vehicle Methods
-:info: Not all methods are available on all vehicles.
+:information_source: Not all methods are available on all vehicles.
 
 * **getPosition()**
 
