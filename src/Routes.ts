@@ -71,19 +71,12 @@ export class Routes {
     return `https://api.porsche.com/service-vehicle/remote-lock-unlock/${vehicle.vin}/${requestId}/status`;
   }
 
-  public vehicleHonkAndFlashURL(vehicle: Vehicle): string {
-    return `https://api.porsche.com/service-vehicle/honk-and-flash/${vehicle.vin}/honk-and-flash`;
+  public vehicleHonkAndOrFlashURL(vehicle: Vehicle, honkAlso: boolean): string {
+    const action = honkAlso ? 'honk-and-flash' : 'flash';
+    return `https://api.porsche.com/service-vehicle/honk-and-flash/${vehicle.vin}/${action}`;
   }
 
-  public vehicleHonkAndFlashStatusURL(vehicle: Vehicle, requestId: string): string {
-    return `https://api.porsche.com/service-vehicle/honk-and-flash/${vehicle.vin}/${requestId}/status`;
-  }
-
-  public vehicleFlashURL(vehicle: Vehicle): string {
-    return `https://api.porsche.com/service-vehicle/honk-and-flash/${vehicle.vin}/flash`;
-  }
-
-  public vehicleFlashStatusURL(vehicle: Vehicle, requestId: string): string {
+  public vehicleHonkAndOrFlashStatusURL(vehicle: Vehicle, requestId: string): string {
     return `https://api.porsche.com/service-vehicle/honk-and-flash/${vehicle.vin}/${requestId}/status`;
   }
 

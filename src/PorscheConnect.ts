@@ -1,8 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
 import { PorscheConnectBase } from './PorscheConnectBase';
 import { PorscheConnectAuth } from './PorscheConnect+Auth';
-import { Vehicle, VehicleConfig } from './Vehicle';
+import { Vehicle } from './Vehicle';
 import { Application } from './Application';
+import type { VehicleConfig } from './VehicleTypes';
 
 export class PorscheError extends Error {}
 export class PorscheActionFailedError extends Error {}
