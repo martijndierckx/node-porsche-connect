@@ -14,5 +14,6 @@ export {
   ChargingMode,
   ClimatisationState,
   ChargeTimerFrequency,
-  SteeringWheelPosition
+  SteeringWheelPosition,
+  DistanceUnit
 } from './Vehicle';

@@ -106,4 +106,9 @@ export class Routes {
   public vehicleMaintenanceInfoURL(vehicle: Vehicle): string {
     return `https://api.porsche.com/predictive-maintenance/information/${vehicle.vin}`;
   }
+
+  public vehicleTripsUrl(vehicle: Vehicle, longTerm: boolean): string {
+    const term = longTerm ? 'LONG_TERM/newest' : 'SHORT_TERM';
+    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/trips/${vehicle.vin}/${term}`;
+  }
 }

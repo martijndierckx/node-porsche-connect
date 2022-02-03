@@ -171,8 +171,6 @@ export type VehiclePosition = {
   heading: number;
 };
 
-export type VehiclePermissions = {};
-
 export enum SteeringWheelPosition {
   Left = 'LEFT',
   Right = 'RIGHT'
@@ -182,6 +180,66 @@ export enum EngineType {
   Combustion = 'COMBUSTION',
   BatteryPowered = 'BEV',
   PluginHybrid = 'PHEV'
+}
+
+export type TripInfo = {
+  type: 'LONG_TERM' | 'SHORT_TERM';
+  id: number;
+  averageSpeed: {
+    value: number;
+    unit: SpeedUnit;
+    valueInKmh: number;
+  };
+  averageFuelConsumption: {
+    value: number;
+    unit: 'LITERS_PER_100_KM';
+    valueInLitersPer100Km: number;
+  };
+  tripMileage: {
+    value: number;
+    unit: DistanceUnit;
+    originalValue: number;
+    originalUnit: DistanceUnit;
+    valueInKilometers: number;
+  };
+  travelTime: number;
+  startMileage: {
+    value: number;
+    unit: DistanceUnit;
+    originalValue: 6;
+    originalUnit: DistanceUnit;
+    valueInKilometers: number;
+  };
+  endMileage: {
+    value: number;
+    unit: DistanceUnit;
+    originalValue: number;
+    originalUnit: DistanceUnit;
+    valueInKilometers: number;
+  };
+  timestamp: Moment;
+  zeroEmissionDistance: {
+    value: number;
+    unit: DistanceUnit;
+    originalValue: number;
+    originalUnit: DistanceUnit;
+    valueInKilometers: number;
+  };
+  averageElectricEngineConsumption: {
+    value: number;
+    unit: 'KWH_PER_100KM';
+    valueKwhPer100Km: number;
+  };
+};
+
+export enum DistanceUnit {
+  Kilometers = 'KILOMETER',
+  Miles = 'MILE'
+}
+
+export enum SpeedUnit {
+  Kmh = 'KMH',
+  Mph = 'MPH'
 }
 
 export class Vehicle {
@@ -225,7 +283,7 @@ export class Vehicle {
     return res.data;
   }
 
-  public async getEmobility(): Promise<VehicleEMobility> {
+  public async getEmobilityInfo(): Promise<VehicleEMobility> {
     if ([EngineType.BatteryPowered, EngineType.PluginHybrid].includes(this.engineType)) {
       const res = await this.porscheConnect.getFromApi(Application.CarControl, this.porscheConnect.routes.vehicleEmobilityURL(this));
       return res.data;
@@ -234,7 +292,7 @@ export class Vehicle {
     return null;
   }
 
-  public async toggleDirectCharge(on: boolean, waitForConfirmation = false) {
+  private async toggleDirectCharge(on: boolean, waitForConfirmation = false) {
     const res = await this.porscheConnect.postToApi(Application.CarControl, this.porscheConnect.routes.vehicleToggleDirectChargingURL(this, on));
 
     if (waitForConfirmation) {
@@ -245,7 +303,15 @@ export class Vehicle {
     }
   }
 
-  public async toggleClimate(on: boolean, waitForConfirmation = false) {
+  public async enableDirectCharge(waitForConfirmation = false) {
+    await this.toggleDirectCharge(true, waitForConfirmation);
+  }
+
+  public async disableDirectCharge(waitForConfirmation = false) {
+    await this.toggleDirectCharge(false, waitForConfirmation);
+  }
+
+  private async toggleClimate(on: boolean, waitForConfirmation = false) {
     const res = await this.porscheConnect.postToApi(Application.CarControl, this.porscheConnect.routes.vehicleToggleClimateURL(this, on));
 
     if (waitForConfirmation) {
@@ -254,6 +320,14 @@ export class Vehicle {
         this.porscheConnect.routes.vehicleToggleClimateStatusURL(this, res.data.requestId)
       );
     }
+  }
+
+  public async enableClimate(waitForConfirmation = false) {
+    await this.toggleClimate(true, waitForConfirmation);
+  }
+
+  public async disableClimate(waitForConfirmation = false) {
+    await this.toggleClimate(false, waitForConfirmation);
   }
 
   public async honkAndFlash(waitForConfirmation = false) {
@@ -272,7 +346,7 @@ export class Vehicle {
     }
   }
 
-  public async toggleLocked(lock: boolean, pin: string, waitForConfirmation = false) {
+  private async toggleLocked(lock: boolean, pin: string, waitForConfirmation = false) {
     const res = await this.porscheConnect.postToApi(Application.CarControl, this.porscheConnect.routes.vehicleToggleLockedURL(this, lock), {
       pin
     });
@@ -286,6 +360,14 @@ export class Vehicle {
         this.porscheConnect.routes.vehicleToggleLockedStatusURL(this, res.data.requestId)
       );
     }
+  }
+
+  public async lock(pin: string, waitForConfirmation = false) {
+    await this.toggleLocked(true, pin, waitForConfirmation);
+  }
+
+  public async unlock(pin: string, waitForConfirmation = false) {
+    await this.toggleLocked(false, pin, waitForConfirmation);
   }
 
   public async getStoredOverview(): Promise<any> {
@@ -308,6 +390,11 @@ export class Vehicle {
 
   public async getMaintenanceInfo(): Promise<any> {
     const res = await this.porscheConnect.getFromApi(Application.CarControl, this.porscheConnect.routes.vehicleMaintenanceInfoURL(this));
+    return res.data;
+  }
+
+  public async getTripInfo(longTermOverview: boolean): Promise<TripInfo[]> {
+    const res = await this.porscheConnect.getFromApi(Application.CarControl, this.porscheConnect.routes.vehicleTripsUrl(this, longTermOverview));
     return res.data;
   }
 }
