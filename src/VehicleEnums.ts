@@ -82,7 +82,10 @@ export enum PressureUnit {
 }
 
 export enum FuelType {
-  Gasoline = 'GASOLINE'
+  Gasoline = 'GASOLINE',
+  Diesel = 'Diesel',
+  Electric = 'Electric',
+  Unsupported = 'UNSUPPORTED'
 }
 
 export enum WindowStatus {

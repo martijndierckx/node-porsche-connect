@@ -16,7 +16,6 @@ export class PorscheConnectAuth extends PorscheConnectBase {
 
   protected async authIfRequired(app: Application): Promise<ApiAuthorization> {
     if (!this.isAuthorized(app)) {
-      // TODO: auth
       await this.auth(app);
     }
 

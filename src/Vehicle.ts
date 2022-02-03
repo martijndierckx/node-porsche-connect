@@ -161,7 +161,7 @@ export class Vehicle {
       this.porscheConnect.routes.vehicleCurrentOverviewStatusURL(this, req.data.requestId),
       60
     );
-    const res = await this.porscheConnect.postToApi(
+    const res = await this.porscheConnect.getFromApi(
       Application.CarControl,
       this.porscheConnect.routes.vehicleCurrentOverviewDataURL(this, req.data.requestId)
     );

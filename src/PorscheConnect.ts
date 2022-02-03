@@ -103,7 +103,8 @@ export class PorscheConnect extends PorscheConnectBase {
           }, 1000);
         });
       } else {
-        if (res.data.status != 'SUCCESS' && res.data.actionState != 'SUCCES') {
+        const successStates = ['SUCCESS', 'SUCCESSFUL']
+        if (!successStates.includes(res.data.status) && !successStates.includes(res.data.actionState)) {
           throw new PorscheActionFailedError(`Non SUCCESS status returned: ${res.data.status ?? res.data.actionState}`);
         }
 

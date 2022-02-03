@@ -203,7 +203,10 @@ export type TripInfo = {
 };
 
 export type VehicleOverview = {
-  batteryLevel: number | null;
+  batteryLevel: {
+    unit: 'PERCENT';
+    value: number;
+  } | null;
   doors: {
     frontLeft: DoorStatus;
     frontRight: DoorStatus;
@@ -216,7 +219,7 @@ export type VehicleOverview = {
   fuelLevel: {
     value: number;
     unit: 'PERCENT';
-  };
+  } | null;
   mileage: {
     value: number;
     unit: DistanceUnit;
@@ -232,18 +235,8 @@ export type VehicleOverview = {
   parkingLightStatus: null;
   parkingTime: Moment;
   remainingRanges: {
-    conventionalRange: {
-      distance: {
-        originalUnit: DistanceUnit;
-        originalValue: number;
-        unit: DistanceUnit;
-        value: number;
-        valueInKilometers: number;
-      };
-      engineType: FuelType;
-      isPrimary: boolean;
-    } | null;
-    electricalRange: {} | null;
+    conventionalRange: Range | null;
+    electricalRange: Range | null;
   };
   serviceIntervals: {
     oilService: ServiceInterval;
@@ -265,23 +258,35 @@ export type VehicleOverview = {
     roof?: WindowStatus;
     sunroof?: {
       status: WindowStatus;
-      positionInPercent: number;
+      positionInPercent: number | null;
     };
   };
 };
 
-export type ServiceInterval = {
-  time: {
-    unit: 'DAYS';
-    value: number;
-  };
+export type Range = {
   distance: {
     originalUnit: DistanceUnit;
     originalValue: number;
     unit: DistanceUnit;
     value: number;
     valueInKilometers: number;
-  };
+  } | null;
+  engineType: FuelType;
+  isPrimary: boolean;
+};
+
+export type ServiceInterval = {
+  time: {
+    unit: 'DAYS';
+    value: number;
+  } | null;
+  distance: {
+    originalUnit: DistanceUnit;
+    originalValue: number;
+    unit: DistanceUnit;
+    value: number;
+    valueInKilometers: number;
+  } | null;
 };
 
 export type TyreInfo = {
@@ -289,16 +294,16 @@ export type TyreInfo = {
     value: number;
     unit: PressureUnit;
     valueInBar: number;
-  };
+  } | null;
   differencePressure: {
     value: number;
     unit: PressureUnit;
     valueInBar: number;
-  };
+  } | null;
   optimalPressure: {
     value: number;
     unit: PressureUnit;
     valueInBar: number;
-  };
-  tirePressureDifferenceStatus: 'DIVERGENT';
+  } | null;
+  tirePressureDifferenceStatus: 'DIVERGENT' | 'UNKNOWN';
 };

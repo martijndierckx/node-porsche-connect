@@ -89,7 +89,7 @@ export class Routes {
   }
 
   public vehicleCurrentOverviewStatusURL(vehicle: Vehicle, requestId: string): string {
-    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/stored/${requestId}/status`;
+    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/current/request/${requestId}/status`
   }
 
   public vehicleCurrentOverviewDataURL(vehicle: Vehicle, requestId: string): string {
