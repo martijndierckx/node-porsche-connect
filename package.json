@@ -1,7 +1,7 @@
 {
   "name": "porsche-connect",
   "version": "0.0.1",
-  "description": "",
+  "description": "A nodejs package which allows reading values from Porsche Connect enabled vehicles",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Martijn Dierckx",
