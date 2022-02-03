@@ -3,8 +3,8 @@ import JWT, { JwtPayload } from 'jsonwebtoken';
 
 export class ApiAuthorization {
   private expiresAt: Moment.Moment;
-  readonly accessToken: string;
-  readonly apiKey: string;
+  public readonly accessToken: string;
+  public readonly apiKey: string;
 
   public constructor(accessToken: string, idToken: string, expiresIn: number) {
     this.accessToken = accessToken;

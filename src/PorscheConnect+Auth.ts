@@ -1,6 +1,6 @@
 import * as Crypto from 'crypto';
 import { ApiAuthorization } from './ApiAuthorization';
-import type { Application } from './Enums';
+import type { Application } from './Application';
 import { PorscheConnectBase } from './PorscheConnectBase';
 
 export class WrongCredentialsError extends Error {}
@@ -8,8 +8,8 @@ export class PorscheAuthError extends Error {}
 
 export class PorscheConnectAuth extends PorscheConnectBase {
   protected isAuthorized(app: Application): boolean {
-    if (this.auths[app] === undefined) return false;
-    if (this.auths[app].isExpired) return false;
+    if (this.auths[app.toString()] === undefined) return false;
+    if (this.auths[app.toString()].isExpired) return false;
 
     return true;
   }
@@ -20,20 +20,20 @@ export class PorscheConnectAuth extends PorscheConnectBase {
       await this.auth(app);
     }
 
-    return this.auths[app];
+    return this.auths[app.toString()];
   }
 
   private async auth(app: Application) {
     await this.loginToRetrieveCookies();
     const { apiAuthCode, codeVerifier } = await this.getApiAuthCode(app);
-    this.auths[app] = await this.getApiToken(app, apiAuthCode, codeVerifier);
+    this.auths[app.toString()] = await this.getApiToken(app, apiAuthCode, codeVerifier);
   }
 
   private async loginToRetrieveCookies() {
     const loginBody = { username: this.username, password: this.password, keeploggedin: 'false', sec: '', resume: '', thirdPartyId: '', state: '' };
     const formBody = this.buildPostFormBody(loginBody);
     try {
-      const result = await this.client.post(this.routes.loginAuthUrl, formBody, { maxRedirects: 30 });
+      const result = await this.client.post(this.routes.loginAuthURL, formBody, { maxRedirects: 30 });
       if (result.headers['cdn-original-uri'] && result.headers['cdn-original-uri'].includes('state=WRONG_CREDENTIALS')) {
         throw new WrongCredentialsError();
       }
@@ -50,8 +50,8 @@ export class PorscheConnectAuth extends PorscheConnectBase {
     try {
       const result = await this.client.get(this.routes.apiAuthURL, {
         params: {
-          client_id: app,
-          redirect_uri: this.getRedirectUrlForApp(app),
+          client_id: app.clientId,
+          redirect_uri: app.redirectUrl,
           code_challenge: codeChallenge,
           scope: 'openid',
           response_type: 'code',
@@ -71,8 +71,8 @@ export class PorscheConnectAuth extends PorscheConnectBase {
 
   private async getApiToken(app: Application, code: string, codeVerifier: string): Promise<ApiAuthorization> {
     const apiTokenBody = {
-      client_id: app,
-      redirect_uri: this.getRedirectUrlForApp(app),
+      client_id: app.clientId,
+      redirect_uri: app.redirectUrl,
       code: code,
       code_verifier: codeVerifier,
       prompt: 'none',

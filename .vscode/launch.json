@@ -12,10 +12,7 @@
       "console": "integratedTerminal",
       "envFile": "${workspaceFolder}/.env",
       "smartStep": true,
-      "skipFiles": ["<node_internals>/**", "node_modules/**"],
-      "env": {
-        "DEBUG": "*"
-      }
+      "skipFiles": ["<node_internals>/**", "node_modules/**"]
     }
   ]
 }
