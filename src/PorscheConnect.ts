@@ -84,7 +84,7 @@ export class PorscheConnect extends PorscheConnectBase {
     };
 
     try {
-      let result = await axios.get(url, { headers });
+      let result = await this.client.get(url, { headers });
       return result;
     } catch (e) {
       if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
@@ -127,7 +127,7 @@ export class PorscheConnect extends PorscheConnectBase {
     };
 
     try {
-      let result = await axios.post(url, body, { headers });
+      let result = await this.client.post(url, body, { headers });
       return result;
     } catch (e) {
       if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();

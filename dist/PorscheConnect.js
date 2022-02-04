@@ -81,7 +81,7 @@ class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
             'x-vrs-url-language': this.env.locale
         };
         try {
-            let result = await axios_1.default.get(url, { headers });
+            let result = await this.client.get(url, { headers });
             return result;
         }
         catch (e) {
@@ -121,7 +121,7 @@ class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
             'x-vrs-url-language': this.env.locale
         };
         try {
-            let result = await axios_1.default.post(url, body, { headers });
+            let result = await this.client.post(url, body, { headers });
             return result;
         }
         catch (e) {

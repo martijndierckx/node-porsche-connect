@@ -70,7 +70,7 @@ class Routes {
         return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/current/request/${requestId}/status`;
     }
     vehicleCurrentOverviewDataURL(vehicle, requestId) {
-        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/current/${requestId}`;
+        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/current/request/${requestId}`;
     }
     vehicleMaintenanceInfoURL(vehicle) {
         return `https://api.porsche.com/predictive-maintenance/information/${vehicle.vin}`;
