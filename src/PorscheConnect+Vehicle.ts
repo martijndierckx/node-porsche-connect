@@ -1,4 +1,3 @@
-import { Application } from './Application';
 import { PorscheConnectBase } from './PorscheConnectBase';
 import type { VehiclePosition, VehicleEMobility, VehicleOverview, TripInfo } from './VehicleTypes';
 
@@ -6,20 +5,20 @@ export class WrongPinError extends Error {}
 
 export abstract class PorscheConnectVehicle extends PorscheConnectBase {
   public async getVehiclePosition(vin: string): Promise<VehiclePosition> {
-    const res = await this.getFromApi(Application.CarControl, this.routes.vehiclePositionURL(vin));
+    const res = await this.getFromApi(this.routes.vehiclePositionURL(vin));
     return res.data;
   }
 
   public async getVehicleEmobilityInfo(vin: string, carModel: string): Promise<VehicleEMobility> {
-    const res = await this.getFromApi(Application.CarControl, this.routes.vehicleEmobilityURL(vin, carModel));
+    const res = await this.getFromApi(this.routes.vehicleEmobilityURL(vin, carModel));
     return res.data;
   }
 
   private async toggleVehicleDirectCharge(vin: string, carModel: string, on: boolean, waitForConfirmation = false) {
-    const res = await this.postToApi(Application.CarControl, this.routes.vehicleToggleDirectChargingURL(vin, carModel, on));
+    const res = await this.postToApi(this.routes.vehicleToggleDirectChargingURL(vin, carModel, on));
 
     if (waitForConfirmation) {
-      await this.getStatusFromApi(Application.CarControl, this.routes.vehicleToggleDirectChargingStatusURL(vin, carModel, res.data.requestId));
+      await this.getStatusFromApi(this.routes.vehicleToggleDirectChargingStatusURL(vin, carModel, res.data.requestId));
     }
   }
 
@@ -32,10 +31,10 @@ export abstract class PorscheConnectVehicle extends PorscheConnectBase {
   }
 
   private async toggleVehicleClimate(vin: string, on: boolean, waitForConfirmation = false) {
-    const res = await this.postToApi(Application.CarControl, this.routes.vehicleToggleClimateURL(vin, on));
+    const res = await this.postToApi(this.routes.vehicleToggleClimateURL(vin, on));
 
     if (waitForConfirmation) {
-      await this.getStatusFromApi(Application.CarControl, this.routes.vehicleToggleClimateStatusURL(vin, res.data.requestId));
+      await this.getStatusFromApi(this.routes.vehicleToggleClimateStatusURL(vin, res.data.requestId));
     }
   }
 
@@ -48,10 +47,10 @@ export abstract class PorscheConnectVehicle extends PorscheConnectBase {
   }
 
   private async honkAndOrFlashVehicle(vin: string, honkAlso: boolean, waitForConfirmation = false) {
-    const res = await this.postToApi(Application.CarControl, this.routes.vehicleHonkAndOrFlashURL(vin, honkAlso));
+    const res = await this.postToApi(this.routes.vehicleHonkAndOrFlashURL(vin, honkAlso));
 
     if (waitForConfirmation) {
-      await this.getStatusFromApi(Application.CarControl, this.routes.vehicleHonkAndOrFlashStatusURL(vin, res.data.id));
+      await this.getStatusFromApi(this.routes.vehicleHonkAndOrFlashStatusURL(vin, res.data.id));
     }
   }
 
@@ -64,7 +63,7 @@ export abstract class PorscheConnectVehicle extends PorscheConnectBase {
   }
 
   private async toggleVehicleLocked(vin: string, lock: boolean, pin: string, waitForConfirmation = false) {
-    const res = await this.postToApi(Application.CarControl, this.routes.vehicleToggleLockedURL(vin, lock), {
+    const res = await this.postToApi(this.routes.vehicleToggleLockedURL(vin, lock), {
       pin
     });
 
@@ -72,7 +71,7 @@ export abstract class PorscheConnectVehicle extends PorscheConnectBase {
     if (res.data.pcckErrorKey == 'LOCKED_60_MINUTES') throw new WrongPinError(`Too many failed attempts, locked 60 minutes`);
 
     if (waitForConfirmation) {
-      await this.getStatusFromApi(Application.CarControl, this.routes.vehicleToggleLockedStatusURL(vin, res.data.requestId));
+      await this.getStatusFromApi(this.routes.vehicleToggleLockedStatusURL(vin, res.data.requestId));
     }
   }
 
@@ -85,24 +84,24 @@ export abstract class PorscheConnectVehicle extends PorscheConnectBase {
   }
 
   public async getVehicleStoredOverview(vin: string): Promise<VehicleOverview> {
-    const res = await this.getFromApi(Application.CarControl, this.routes.vehicleStoredOverviewURL(vin));
+    const res = await this.getFromApi(this.routes.vehicleStoredOverviewURL(vin));
     return res.data;
   }
 
   public async getVehicleCurrentOverview(vin: string): Promise<VehicleOverview> {
-    const req = await this.postToApi(Application.CarControl, this.routes.vehicleCurrentOverviewInvokeURL(vin));
-    await this.getStatusFromApi(Application.CarControl, this.routes.vehicleCurrentOverviewStatusURL(vin, req.data.requestId), 60);
-    const res = await this.getFromApi(Application.CarControl, this.routes.vehicleCurrentOverviewDataURL(vin, req.data.requestId));
+    const req = await this.postToApi(this.routes.vehicleCurrentOverviewInvokeURL(vin));
+    await this.getStatusFromApi(this.routes.vehicleCurrentOverviewStatusURL(vin, req.data.requestId), 60);
+    const res = await this.getFromApi(this.routes.vehicleCurrentOverviewDataURL(vin, req.data.requestId));
     return res.data;
   }
 
   public async getVehicleMaintenanceInfo(vin: string): Promise<any> {
-    const res = await this.getFromApi(Application.CarControl, this.routes.vehicleMaintenanceInfoURL(vin));
+    const res = await this.getFromApi(this.routes.vehicleMaintenanceInfoURL(vin));
     return res.data;
   }
 
   public async getVehicleTripInfo(vin: string, longTermOverview = false): Promise<TripInfo[]> {
-    const res = await this.getFromApi(Application.CarControl, this.routes.vehicleTripsUrl(vin, longTermOverview));
+    const res = await this.getFromApi(this.routes.vehicleTripsUrl(vin, longTermOverview));
     return res.data;
   }
 }

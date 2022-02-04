@@ -12,16 +12,16 @@ export class PorscheServerError extends Error {}
 
 export class PorscheConnect extends PorscheConnectBase {
   public async getVehicles(): Promise<Vehicle[]> {
-    const res = await this.getFromApi(Application.Portal, this.routes.vehiclesURL);
+    const res = await this.getFromApi(this.routes.vehiclesURL);
 
     const vehicles: Vehicle[] = [];
     if (Array.isArray(res.data)) {
       await Promise.allSettled(
         res.data.map(async (v) => {
           const data = await Promise.allSettled([
-            await this.getFromApi(Application.CarControl, this.routes.vehicleCapabilitiesURL(v.vin)),
-            await this.getFromApi(Application.CarControl, this.routes.vehicleSummaryURL(v.vin)),
-            await this.getFromApi(Application.Portal, this.routes.vehiclePermissionsURL(v.vin))
+            await this.getFromApi(this.routes.vehicleCapabilitiesURL(v.vin)),
+            await this.getFromApi(this.routes.vehicleSummaryURL(v.vin)),
+            await this.getFromApi(this.routes.vehiclePermissionsURL(v.vin))
           ]);
 
           const capabilities = data[0].status == 'fulfilled' ? data[0].value.data : {};
@@ -75,7 +75,9 @@ export class PorscheConnect extends PorscheConnectBase {
     return vehicles;
   }
 
-  protected async getFromApi(app: Application, url: string): Promise<AxiosResponse> {
+  protected async getFromApi(url: string): Promise<AxiosResponse> {
+    const app = Application.getFromUrl(url);
+
     const auth = await this.authIfRequired(app);
     const headers = {
       Authorization: `Bearer ${auth.accessToken}`,
@@ -88,15 +90,16 @@ export class PorscheConnect extends PorscheConnectBase {
       let result = await this.client.get(url, { headers });
       return result;
     } catch (e) {
-      if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
+      if (axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503)
+        throw new PorscheServerError();
       throw new PorscheError();
     }
   }
 
-  protected async getStatusFromApi(app: Application, url: string, retries = 10): Promise<void> {
+  protected async getStatusFromApi(url: string, retries = 10): Promise<void> {
     // Limit retries
     for (let i = 0; i < retries; i++) {
-      const res = await this.getFromApi(app, url);
+      const res = await this.getFromApi(url);
 
       if ((res.data.status && res.data.status == 'IN_PROGRESS') || (res.data.actionState && res.data.actionState == 'IN_PROGRESS')) {
         // Wait 1 second before polling again
@@ -106,7 +109,7 @@ export class PorscheConnect extends PorscheConnectBase {
           }, 1000);
         });
       } else {
-        const successStates = ['SUCCESS', 'SUCCESSFUL']
+        const successStates = ['SUCCESS', 'SUCCESSFUL'];
         if (!successStates.includes(res.data.status) && !successStates.includes(res.data.actionState)) {
           throw new PorscheActionFailedError(`Non SUCCESS status returned: ${res.data.status ?? res.data.actionState}`);
         }
@@ -118,7 +121,9 @@ export class PorscheConnect extends PorscheConnectBase {
     return;
   }
 
-  protected async postToApi(app: Application, url: string, body: any = undefined): Promise<AxiosResponse> {
+  protected async postToApi(url: string, body: any = undefined): Promise<AxiosResponse> {
+    const app = Application.getFromUrl(url);
+
     const auth = await this.authIfRequired(app);
     const headers = {
       Authorization: `Bearer ${auth.accessToken}`,
@@ -131,7 +136,8 @@ export class PorscheConnect extends PorscheConnectBase {
       let result = await this.client.post(url, body, { headers });
       return result;
     } catch (e) {
-      if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
+      if (axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503)
+        throw new PorscheServerError();
       throw new PorscheError();
     }
   }

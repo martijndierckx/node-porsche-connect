@@ -4,7 +4,6 @@ import * as PersistentAxios from 'axios-cookiejar-support';
 import { CookieJar } from 'tough-cookie';
 import type { ApiAuthorization } from './ApiAuthorization';
 import { Environment } from './Environment';
-import type { Application } from './Application';
 
 export type PorscheConnectConfig = {
   username: string;
@@ -39,7 +38,7 @@ export abstract class PorscheConnectBase {
     return params;
   }
 
-  protected abstract postToApi(app: Application, url: string, body?: any): Promise<AxiosResponse>;
-  protected abstract getFromApi(app: Application, url: string): Promise<AxiosResponse>;
-  protected abstract getStatusFromApi(app: Application, url: string, retries?: number): Promise<void>;
+  protected abstract postToApi(url: string, body?: any): Promise<AxiosResponse>;
+  protected abstract getFromApi(url: string): Promise<AxiosResponse>;
+  protected abstract getStatusFromApi(url: string, retries?: number): Promise<void>;
 }

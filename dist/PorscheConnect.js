@@ -19,14 +19,14 @@ class PorscheServerError extends Error {
 exports.PorscheServerError = PorscheServerError;
 class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
     async getVehicles() {
-        const res = await this.getFromApi(Application_1.Application.Portal, this.routes.vehiclesURL);
+        const res = await this.getFromApi(this.routes.vehiclesURL);
         const vehicles = [];
         if (Array.isArray(res.data)) {
             await Promise.allSettled(res.data.map(async (v) => {
                 const data = await Promise.allSettled([
-                    await this.getFromApi(Application_1.Application.CarControl, this.routes.vehicleCapabilitiesURL(v.vin)),
-                    await this.getFromApi(Application_1.Application.CarControl, this.routes.vehicleSummaryURL(v.vin)),
-                    await this.getFromApi(Application_1.Application.Portal, this.routes.vehiclePermissionsURL(v.vin))
+                    await this.getFromApi(this.routes.vehicleCapabilitiesURL(v.vin)),
+                    await this.getFromApi(this.routes.vehicleSummaryURL(v.vin)),
+                    await this.getFromApi(this.routes.vehiclePermissionsURL(v.vin))
                 ]);
                 const capabilities = data[0].status == 'fulfilled' ? data[0].value.data : {};
                 const summary = data[1].status == 'fulfilled' ? data[1].value.data : {};
@@ -73,7 +73,8 @@ class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
         }
         return vehicles;
     }
-    async getFromApi(app, url) {
+    async getFromApi(url) {
+        const app = Application_1.Application.getFromUrl(url);
         const auth = await this.authIfRequired(app);
         const headers = {
             Authorization: `Bearer ${auth.accessToken}`,
@@ -91,10 +92,10 @@ class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
             throw new PorscheError();
         }
     }
-    async getStatusFromApi(app, url, retries = 10) {
+    async getStatusFromApi(url, retries = 10) {
         // Limit retries
         for (let i = 0; i < retries; i++) {
-            const res = await this.getFromApi(app, url);
+            const res = await this.getFromApi(url);
             if ((res.data.status && res.data.status == 'IN_PROGRESS') || (res.data.actionState && res.data.actionState == 'IN_PROGRESS')) {
                 // Wait 1 second before polling again
                 await new Promise((resolve) => {
@@ -113,7 +114,8 @@ class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
         }
         return;
     }
-    async postToApi(app, url, body = undefined) {
+    async postToApi(url, body = undefined) {
+        const app = Application_1.Application.getFromUrl(url);
         const auth = await this.authIfRequired(app);
         const headers = {
             Authorization: `Bearer ${auth.accessToken}`,
