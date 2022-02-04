@@ -26,58 +26,58 @@ class Routes {
     vehicleCapabilitiesURL(vin) {
         return `https://api.porsche.com/service-vehicle/vcs/capabilities/${vin}`;
     }
-    vehiclePositionURL(vehicle) {
-        return `https://api.porsche.com/service-vehicle/car-finder/${vehicle.vin}/position`;
+    vehiclePositionURL(vin) {
+        return `https://api.porsche.com/service-vehicle/car-finder/${vin}/position`;
     }
-    vehicleEmobilityURL(vehicle) {
-        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vehicle.carModel}/${vehicle.vin}?timezone=${this.env.timeZone}`;
+    vehicleEmobilityURL(vin, carModel) {
+        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${carModel}/${vin}?timezone=${this.env.timeZone}`;
     }
-    vehicleToggleDirectChargingURL(vehicle, on) {
+    vehicleToggleDirectChargingURL(vin, carModel, on) {
         const action = on ? 'true' : 'false';
-        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vehicle.carModel}/${vehicle.vin}/toggle-direct-charging/${action}`;
+        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${carModel}/${vin}/toggle-direct-charging/${action}`;
     }
-    vehicleToggleDirectChargingStatusURL(vehicle, requestId) {
-        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vehicle.carModel}/${vehicle.vin}/toggle-direct-charging/status/${requestId}`;
+    vehicleToggleDirectChargingStatusURL(vin, carModel, requestId) {
+        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${carModel}/${vin}/toggle-direct-charging/status/${requestId}`;
     }
-    vehicleToggleClimateURL(vehicle, on) {
+    vehicleToggleClimateURL(vin, on) {
         const action = on ? 'true' : 'false';
-        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vehicle.vin}/toggle-direct-climatisation/${action}`;
+        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vin}/toggle-direct-climatisation/${action}`;
     }
-    vehicleToggleClimateStatusURL(vehicle, requestId) {
-        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vehicle.vin}/toggle-direct-climatisation/status/${requestId}`;
+    vehicleToggleClimateStatusURL(vin, requestId) {
+        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vin}/toggle-direct-climatisation/status/${requestId}`;
     }
-    vehicleToggleLockedURL(vehicle, lock) {
+    vehicleToggleLockedURL(vin, lock) {
         const action = lock ? 'lock' : 'unlock';
-        return `https://api.porsche.com/service-vehicle/remote-lock-unlock/${vehicle.vin}/${action}`;
+        return `https://api.porsche.com/service-vehicle/remote-lock-unlock/${vin}/${action}`;
     }
-    vehicleToggleLockedStatusURL(vehicle, requestId) {
-        return `https://api.porsche.com/service-vehicle/remote-lock-unlock/${vehicle.vin}/${requestId}/status`;
+    vehicleToggleLockedStatusURL(vin, requestId) {
+        return `https://api.porsche.com/service-vehicle/remote-lock-unlock/${vin}/${requestId}/status`;
     }
-    vehicleHonkAndOrFlashURL(vehicle, honkAlso) {
+    vehicleHonkAndOrFlashURL(vin, honkAlso) {
         const action = honkAlso ? 'honk-and-flash' : 'flash';
-        return `https://api.porsche.com/service-vehicle/honk-and-flash/${vehicle.vin}/${action}`;
+        return `https://api.porsche.com/service-vehicle/honk-and-flash/${vin}/${action}`;
     }
-    vehicleHonkAndOrFlashStatusURL(vehicle, requestId) {
-        return `https://api.porsche.com/service-vehicle/honk-and-flash/${vehicle.vin}/${requestId}/status`;
+    vehicleHonkAndOrFlashStatusURL(vin, requestId) {
+        return `https://api.porsche.com/service-vehicle/honk-and-flash/${vin}/${requestId}/status`;
     }
-    vehicleStoredOverviewURL(vehicle) {
-        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/stored`;
+    vehicleStoredOverviewURL(vin) {
+        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vin}/stored`;
     }
-    vehicleCurrentOverviewInvokeURL(vehicle) {
-        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/current/request`;
+    vehicleCurrentOverviewInvokeURL(vin) {
+        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vin}/current/request`;
     }
-    vehicleCurrentOverviewStatusURL(vehicle, requestId) {
-        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/current/request/${requestId}/status`;
+    vehicleCurrentOverviewStatusURL(vin, requestId) {
+        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vin}/current/request/${requestId}/status`;
     }
-    vehicleCurrentOverviewDataURL(vehicle, requestId) {
-        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/current/request/${requestId}`;
+    vehicleCurrentOverviewDataURL(vin, requestId) {
+        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vin}/current/request/${requestId}`;
     }
-    vehicleMaintenanceInfoURL(vehicle) {
-        return `https://api.porsche.com/predictive-maintenance/information/${vehicle.vin}`;
+    vehicleMaintenanceInfoURL(vin) {
+        return `https://api.porsche.com/predictive-maintenance/information/${vin}`;
     }
-    vehicleTripsUrl(vehicle, longTerm) {
+    vehicleTripsUrl(vin, longTerm) {
         const term = longTerm ? 'LONG_TERM/newest' : 'SHORT_TERM';
-        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/trips/${vehicle.vin}/${term}`;
+        return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/trips/${vin}/${term}`;
     }
 }
 exports.Routes = Routes;

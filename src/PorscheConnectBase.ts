@@ -1,9 +1,10 @@
 import { Routes } from './Routes';
-import axios, { Axios } from 'axios';
+import axios, { Axios, AxiosResponse } from 'axios';
 import * as PersistentAxios from 'axios-cookiejar-support';
 import { CookieJar } from 'tough-cookie';
 import type { ApiAuthorization } from './ApiAuthorization';
-import { Environment } from './Locale';
+import { Environment } from './Environment';
+import type { Application } from './Application';
 
 export type PorscheConnectConfig = {
   username: string;
@@ -11,9 +12,9 @@ export type PorscheConnectConfig = {
   env?: Environment;
 };
 
-export class PorscheConnectBase {
+export abstract class PorscheConnectBase {
   protected readonly env: Environment;
-  public readonly routes: Routes;
+  protected readonly routes: Routes;
   protected client: Axios;
 
   protected readonly username: string;
@@ -37,4 +38,8 @@ export class PorscheConnectBase {
 
     return params;
   }
+
+  protected abstract postToApi(app: Application, url: string, body?: any): Promise<AxiosResponse>;
+  protected abstract getFromApi(app: Application, url: string): Promise<AxiosResponse>;
+  protected abstract getStatusFromApi(app: Application, url: string, retries?: number): Promise<void>;
 }

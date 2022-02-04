@@ -4,6 +4,7 @@ import { PorscheConnectAuth } from './PorscheConnect+Auth';
 import { Vehicle } from './Vehicle';
 import { Application } from './Application';
 import type { VehicleConfig } from './VehicleTypes';
+import { PorscheConnectVehicle } from './PorscheConnect+Vehicle';
 
 export class PorscheError extends Error {}
 export class PorscheActionFailedError extends Error {}
@@ -74,7 +75,7 @@ export class PorscheConnect extends PorscheConnectBase {
     return vehicles;
   }
 
-  public async getFromApi(app: Application, url: string): Promise<AxiosResponse> {
+  protected async getFromApi(app: Application, url: string): Promise<AxiosResponse> {
     const auth = await this.authIfRequired(app);
     const headers = {
       Authorization: `Bearer ${auth.accessToken}`,
@@ -92,7 +93,7 @@ export class PorscheConnect extends PorscheConnectBase {
     }
   }
 
-  public async getStatusFromApi(app: Application, url: string, retries = 10) {
+  protected async getStatusFromApi(app: Application, url: string, retries = 10): Promise<void> {
     // Limit retries
     for (let i = 0; i < retries; i++) {
       const res = await this.getFromApi(app, url);
@@ -117,7 +118,7 @@ export class PorscheConnect extends PorscheConnectBase {
     return;
   }
 
-  public async postToApi(app: Application, url: string, body: any = undefined): Promise<AxiosResponse> {
+  protected async postToApi(app: Application, url: string, body: any = undefined): Promise<AxiosResponse> {
     const auth = await this.authIfRequired(app);
     const headers = {
       Authorization: `Bearer ${auth.accessToken}`,
@@ -136,8 +137,8 @@ export class PorscheConnect extends PorscheConnectBase {
   }
 }
 
-export interface PorscheConnect extends PorscheConnectAuth {}
-applyMixins(PorscheConnect, [PorscheConnectAuth]);
+export interface PorscheConnect extends PorscheConnectAuth, PorscheConnectVehicle {}
+applyMixins(PorscheConnect, [PorscheConnectAuth, PorscheConnectVehicle]);
 function applyMixins(derivedCtor: any, constructors: any[]) {
   constructors.forEach((baseCtor) => {
     Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {

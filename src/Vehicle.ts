@@ -1,5 +1,4 @@
 import type { PorscheConnect } from './PorscheConnect';
-import { Application } from './Application';
 import { EngineType, SteeringWheelPosition } from './VehicleEnums';
 import type {
   VehiclePicture,
@@ -11,7 +10,6 @@ import type {
   TripInfo
 } from './VehicleTypes';
 
-export class WrongPinError extends Error {}
 export class NotSupportedError extends Error {}
 
 export class Vehicle {
@@ -51,130 +49,70 @@ export class Vehicle {
   }
 
   public async getPosition(): Promise<VehiclePosition> {
-    const res = await this.porscheConnect.getFromApi(Application.CarControl, this.porscheConnect.routes.vehiclePositionURL(this));
-    return res.data;
+    return await this.porscheConnect.getVehiclePosition(this.vin);
   }
 
   public async getEmobilityInfo(): Promise<VehicleEMobility> {
     if ([EngineType.BatteryPowered, EngineType.PluginHybrid].includes(this.engineType)) {
-      const res = await this.porscheConnect.getFromApi(Application.CarControl, this.porscheConnect.routes.vehicleEmobilityURL(this));
-      return res.data;
-    }
-
-    return null;
-  }
-
-  private async toggleDirectCharge(on: boolean, waitForConfirmation = false) {
-    const res = await this.porscheConnect.postToApi(Application.CarControl, this.porscheConnect.routes.vehicleToggleDirectChargingURL(this, on));
-
-    if (waitForConfirmation) {
-      await this.porscheConnect.getStatusFromApi(
-        Application.CarControl,
-        this.porscheConnect.routes.vehicleToggleDirectChargingStatusURL(this, res.data.requestId)
-      );
-    }
-  }
-
-  public async enableDirectCharge(waitForConfirmation = false) {
-    await this.toggleDirectCharge(true, waitForConfirmation);
-  }
-
-  public async disableDirectCharge(waitForConfirmation = false) {
-    await this.toggleDirectCharge(false, waitForConfirmation);
-  }
-
-  private async toggleClimate(on: boolean, waitForConfirmation = false) {
-    const res = await this.porscheConnect.postToApi(Application.CarControl, this.porscheConnect.routes.vehicleToggleClimateURL(this, on));
-
-    if (waitForConfirmation) {
-      await this.porscheConnect.getStatusFromApi(
-        Application.CarControl,
-        this.porscheConnect.routes.vehicleToggleClimateStatusURL(this, res.data.requestId)
-      );
-    }
-  }
-
-  public async enableClimate(waitForConfirmation = false) {
-    await this.toggleClimate(true, waitForConfirmation);
-  }
-
-  public async disableClimate(waitForConfirmation = false) {
-    await this.toggleClimate(false, waitForConfirmation);
-  }
-
-  private async honkAndOrFlash(honkAlso: boolean, waitForConfirmation = false) {
-    if (this.remoteCapabilities.hasHonkAndFlash) {
-      const res = await this.porscheConnect.postToApi(Application.CarControl, this.porscheConnect.routes.vehicleHonkAndOrFlashURL(this, honkAlso));
-
-      if (waitForConfirmation) {
-        await this.porscheConnect.getStatusFromApi(
-          Application.CarControl,
-          this.porscheConnect.routes.vehicleHonkAndOrFlashStatusURL(this, res.data.id)
-        );
-      }
+      return await this.porscheConnect.getVehicleEmobilityInfo(this.vin, this.carModel);
     } else {
       throw new NotSupportedError();
     }
   }
 
+  public async enableDirectCharge(waitForConfirmation = false) {
+    await this.porscheConnect.enableVehicleDirectCharge(this.vin, this.carModel, waitForConfirmation);
+  }
+
+  public async disableDirectCharge(waitForConfirmation = false) {
+    await this.porscheConnect.disableVehicleDirectCharge(this.vin, this.carModel, waitForConfirmation);
+  }
+
+  public async enableClimate(waitForConfirmation = false) {
+    await this.porscheConnect.enableVehicleClimate(this.vin, waitForConfirmation);
+  }
+
+  public async disableClimate(waitForConfirmation = false) {
+    await this.porscheConnect.disableVehicleClimate(this.vin, waitForConfirmation);
+  }
+
   public async honkAndFlash(waitForConfirmation = false) {
-    await this.honkAndOrFlash(true, waitForConfirmation);
+    if (this.remoteCapabilities.hasHonkAndFlash) {
+      await this.porscheConnect.honkAndFlashVehicle(this.vin, waitForConfirmation);
+    } else {
+      throw new NotSupportedError();
+    }
   }
 
   public async flash(waitForConfirmation = false) {
-    await this.honkAndOrFlash(false, waitForConfirmation);
-  }
-
-  private async toggleLocked(lock: boolean, pin: string, waitForConfirmation = false) {
-    const res = await this.porscheConnect.postToApi(Application.CarControl, this.porscheConnect.routes.vehicleToggleLockedURL(this, lock), {
-      pin
-    });
-
-    if (res.data.pcckErrorKey == 'INCORRECT') throw new WrongPinError(`PIN code was incorrect`);
-    if (res.data.pcckErrorKey == 'LOCKED_60_MINUTES') throw new WrongPinError(`Too many failed attempts, locked 60 minutes`);
-
-    if (waitForConfirmation) {
-      await this.porscheConnect.getStatusFromApi(
-        Application.CarControl,
-        this.porscheConnect.routes.vehicleToggleLockedStatusURL(this, res.data.requestId)
-      );
+    if (this.remoteCapabilities.hasHonkAndFlash) {
+      await this.porscheConnect.flashVehicle(this.vin, waitForConfirmation);
+    } else {
+      throw new NotSupportedError();
     }
   }
 
   public async lock(pin: string, waitForConfirmation = false) {
-    await this.toggleLocked(true, pin, waitForConfirmation);
+    await await this.porscheConnect.lockVehicle(this.vin, pin, waitForConfirmation);
   }
 
   public async unlock(pin: string, waitForConfirmation = false) {
-    await this.toggleLocked(false, pin, waitForConfirmation);
+    await await this.porscheConnect.unlockVehicle(this.vin, pin, waitForConfirmation);
   }
 
   public async getStoredOverview(): Promise<VehicleOverview> {
-    const res = await this.porscheConnect.getFromApi(Application.CarControl, this.porscheConnect.routes.vehicleStoredOverviewURL(this));
-    return res.data;
+    return await this.porscheConnect.getVehicleStoredOverview(this.vin);
   }
 
   public async getCurrentOverview(): Promise<VehicleOverview> {
-    const req = await this.porscheConnect.postToApi(Application.CarControl, this.porscheConnect.routes.vehicleCurrentOverviewInvokeURL(this));
-    await this.porscheConnect.getStatusFromApi(
-      Application.CarControl,
-      this.porscheConnect.routes.vehicleCurrentOverviewStatusURL(this, req.data.requestId),
-      60
-    );
-    const res = await this.porscheConnect.getFromApi(
-      Application.CarControl,
-      this.porscheConnect.routes.vehicleCurrentOverviewDataURL(this, req.data.requestId)
-    );
-    return res.data;
+    return await this.porscheConnect.getVehicleCurrentOverview(this.vin);
   }
 
   public async getMaintenanceInfo(): Promise<any> {
-    const res = await this.porscheConnect.getFromApi(Application.CarControl, this.porscheConnect.routes.vehicleMaintenanceInfoURL(this));
-    return res.data;
+    return await this.porscheConnect.getVehicleMaintenanceInfo(this.vin);
   }
 
   public async getTripInfo(longTermOverview = false): Promise<TripInfo[]> {
-    const res = await this.porscheConnect.getFromApi(Application.CarControl, this.porscheConnect.routes.vehicleTripsUrl(this, longTermOverview));
-    return res.data;
+    return await this.porscheConnect.getVehicleTripInfo(this.vin, longTermOverview);
   }
 }

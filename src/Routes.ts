@@ -1,5 +1,4 @@
-import type { Environment } from './Locale';
-import type { Vehicle } from './Vehicle';
+import type { Environment } from './Environment';
 
 export class Routes {
   private env: Environment;
@@ -36,72 +35,72 @@ export class Routes {
     return `https://api.porsche.com/service-vehicle/vcs/capabilities/${vin}`;
   }
 
-  public vehiclePositionURL(vehicle: Vehicle): string {
-    return `https://api.porsche.com/service-vehicle/car-finder/${vehicle.vin}/position`;
+  public vehiclePositionURL(vin: string): string {
+    return `https://api.porsche.com/service-vehicle/car-finder/${vin}/position`;
   }
 
-  public vehicleEmobilityURL(vehicle: Vehicle): string {
-    return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vehicle.carModel}/${vehicle.vin}?timezone=${this.env.timeZone}`;
+  public vehicleEmobilityURL(vin: string, carModel: string): string {
+    return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${carModel}/${vin}?timezone=${this.env.timeZone}`;
   }
 
-  public vehicleToggleDirectChargingURL(vehicle: Vehicle, on: boolean): string {
+  public vehicleToggleDirectChargingURL(vin: string, carModel: string, on: boolean): string {
     const action = on ? 'true' : 'false';
-    return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vehicle.carModel}/${vehicle.vin}/toggle-direct-charging/${action}`;
+    return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${carModel}/${vin}/toggle-direct-charging/${action}`;
   }
 
-  public vehicleToggleDirectChargingStatusURL(vehicle: Vehicle, requestId: string): string {
-    return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vehicle.carModel}/${vehicle.vin}/toggle-direct-charging/status/${requestId}`;
+  public vehicleToggleDirectChargingStatusURL(vin: string, carModel: string, requestId: string): string {
+    return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${carModel}/${vin}/toggle-direct-charging/status/${requestId}`;
   }
 
-  public vehicleToggleClimateURL(vehicle: Vehicle, on: boolean): string {
+  public vehicleToggleClimateURL(vin: string, on: boolean): string {
     const action = on ? 'true' : 'false';
-    return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vehicle.vin}/toggle-direct-climatisation/${action}`;
+    return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vin}/toggle-direct-climatisation/${action}`;
   }
 
-  public vehicleToggleClimateStatusURL(vehicle: Vehicle, requestId: string): string {
-    return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vehicle.vin}/toggle-direct-climatisation/status/${requestId}`;
+  public vehicleToggleClimateStatusURL(vin: string, requestId: string): string {
+    return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${vin}/toggle-direct-climatisation/status/${requestId}`;
   }
 
-  public vehicleToggleLockedURL(vehicle: Vehicle, lock: boolean): string {
+  public vehicleToggleLockedURL(vin: string, lock: boolean): string {
     const action = lock ? 'lock' : 'unlock';
-    return `https://api.porsche.com/service-vehicle/remote-lock-unlock/${vehicle.vin}/${action}`;
+    return `https://api.porsche.com/service-vehicle/remote-lock-unlock/${vin}/${action}`;
   }
 
-  public vehicleToggleLockedStatusURL(vehicle: Vehicle, requestId: string): string {
-    return `https://api.porsche.com/service-vehicle/remote-lock-unlock/${vehicle.vin}/${requestId}/status`;
+  public vehicleToggleLockedStatusURL(vin: string, requestId: string): string {
+    return `https://api.porsche.com/service-vehicle/remote-lock-unlock/${vin}/${requestId}/status`;
   }
 
-  public vehicleHonkAndOrFlashURL(vehicle: Vehicle, honkAlso: boolean): string {
+  public vehicleHonkAndOrFlashURL(vin: string, honkAlso: boolean): string {
     const action = honkAlso ? 'honk-and-flash' : 'flash';
-    return `https://api.porsche.com/service-vehicle/honk-and-flash/${vehicle.vin}/${action}`;
+    return `https://api.porsche.com/service-vehicle/honk-and-flash/${vin}/${action}`;
   }
 
-  public vehicleHonkAndOrFlashStatusURL(vehicle: Vehicle, requestId: string): string {
-    return `https://api.porsche.com/service-vehicle/honk-and-flash/${vehicle.vin}/${requestId}/status`;
+  public vehicleHonkAndOrFlashStatusURL(vin: string, requestId: string): string {
+    return `https://api.porsche.com/service-vehicle/honk-and-flash/${vin}/${requestId}/status`;
   }
 
-  public vehicleStoredOverviewURL(vehicle: Vehicle): string {
-    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/stored`;
+  public vehicleStoredOverviewURL(vin: string): string {
+    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vin}/stored`;
   }
 
-  public vehicleCurrentOverviewInvokeURL(vehicle: Vehicle): string {
-    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/current/request`;
+  public vehicleCurrentOverviewInvokeURL(vin: string): string {
+    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vin}/current/request`;
   }
 
-  public vehicleCurrentOverviewStatusURL(vehicle: Vehicle, requestId: string): string {
-    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/current/request/${requestId}/status`
+  public vehicleCurrentOverviewStatusURL(vin: string, requestId: string): string {
+    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vin}/current/request/${requestId}/status`;
   }
 
-  public vehicleCurrentOverviewDataURL(vehicle: Vehicle, requestId: string): string {
-    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vehicle.vin}/current/request/${requestId}`;
+  public vehicleCurrentOverviewDataURL(vin: string, requestId: string): string {
+    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/vehicle-data/${vin}/current/request/${requestId}`;
   }
 
-  public vehicleMaintenanceInfoURL(vehicle: Vehicle): string {
-    return `https://api.porsche.com/predictive-maintenance/information/${vehicle.vin}`;
+  public vehicleMaintenanceInfoURL(vin: string): string {
+    return `https://api.porsche.com/predictive-maintenance/information/${vin}`;
   }
 
-  public vehicleTripsUrl(vehicle: Vehicle, longTerm: boolean): string {
+  public vehicleTripsUrl(vin: string, longTerm: boolean): string {
     const term = longTerm ? 'LONG_TERM/newest' : 'SHORT_TERM';
-    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/trips/${vehicle.vin}/${term}`;
+    return `https://api.porsche.com/service-vehicle/${this.env.country}/${this.env.locale}/trips/${vin}/${term}`;
   }
 }

@@ -5,7 +5,7 @@ export declare class WrongCredentialsError extends Error {
 }
 export declare class PorscheAuthError extends Error {
 }
-export declare class PorscheConnectAuth extends PorscheConnectBase {
+export declare abstract class PorscheConnectAuth extends PorscheConnectBase {
     protected isAuthorized(app: Application): boolean;
     protected authIfRequired(app: Application): Promise<ApiAuthorization>;
     private auth;

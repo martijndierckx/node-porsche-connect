@@ -7,6 +7,7 @@ const PorscheConnectBase_1 = require("./PorscheConnectBase");
 const PorscheConnect_Auth_1 = require("./PorscheConnect+Auth");
 const Vehicle_1 = require("./Vehicle");
 const Application_1 = require("./Application");
+const PorscheConnect_Vehicle_1 = require("./PorscheConnect+Vehicle");
 class PorscheError extends Error {
 }
 exports.PorscheError = PorscheError;
@@ -132,7 +133,7 @@ class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
     }
 }
 exports.PorscheConnect = PorscheConnect;
-applyMixins(PorscheConnect, [PorscheConnect_Auth_1.PorscheConnectAuth]);
+applyMixins(PorscheConnect, [PorscheConnect_Auth_1.PorscheConnectAuth, PorscheConnect_Vehicle_1.PorscheConnectVehicle]);
 function applyMixins(derivedCtor, constructors) {
     constructors.forEach((baseCtor) => {
         Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {

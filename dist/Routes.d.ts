@@ -1,5 +1,4 @@
-import type { Environment } from './Locale';
-import type { Vehicle } from './Vehicle';
+import type { Environment } from './Environment';
 export declare class Routes {
     private env;
     constructor(locale: Environment);
@@ -10,20 +9,20 @@ export declare class Routes {
     vehiclePermissionsURL(vin: string): string;
     vehicleSummaryURL(vin: string): string;
     vehicleCapabilitiesURL(vin: string): string;
-    vehiclePositionURL(vehicle: Vehicle): string;
-    vehicleEmobilityURL(vehicle: Vehicle): string;
-    vehicleToggleDirectChargingURL(vehicle: Vehicle, on: boolean): string;
-    vehicleToggleDirectChargingStatusURL(vehicle: Vehicle, requestId: string): string;
-    vehicleToggleClimateURL(vehicle: Vehicle, on: boolean): string;
-    vehicleToggleClimateStatusURL(vehicle: Vehicle, requestId: string): string;
-    vehicleToggleLockedURL(vehicle: Vehicle, lock: boolean): string;
-    vehicleToggleLockedStatusURL(vehicle: Vehicle, requestId: string): string;
-    vehicleHonkAndOrFlashURL(vehicle: Vehicle, honkAlso: boolean): string;
-    vehicleHonkAndOrFlashStatusURL(vehicle: Vehicle, requestId: string): string;
-    vehicleStoredOverviewURL(vehicle: Vehicle): string;
-    vehicleCurrentOverviewInvokeURL(vehicle: Vehicle): string;
-    vehicleCurrentOverviewStatusURL(vehicle: Vehicle, requestId: string): string;
-    vehicleCurrentOverviewDataURL(vehicle: Vehicle, requestId: string): string;
-    vehicleMaintenanceInfoURL(vehicle: Vehicle): string;
-    vehicleTripsUrl(vehicle: Vehicle, longTerm: boolean): string;
+    vehiclePositionURL(vin: string): string;
+    vehicleEmobilityURL(vin: string, carModel: string): string;
+    vehicleToggleDirectChargingURL(vin: string, carModel: string, on: boolean): string;
+    vehicleToggleDirectChargingStatusURL(vin: string, carModel: string, requestId: string): string;
+    vehicleToggleClimateURL(vin: string, on: boolean): string;
+    vehicleToggleClimateStatusURL(vin: string, requestId: string): string;
+    vehicleToggleLockedURL(vin: string, lock: boolean): string;
+    vehicleToggleLockedStatusURL(vin: string, requestId: string): string;
+    vehicleHonkAndOrFlashURL(vin: string, honkAlso: boolean): string;
+    vehicleHonkAndOrFlashStatusURL(vin: string, requestId: string): string;
+    vehicleStoredOverviewURL(vin: string): string;
+    vehicleCurrentOverviewInvokeURL(vin: string): string;
+    vehicleCurrentOverviewStatusURL(vin: string, requestId: string): string;
+    vehicleCurrentOverviewDataURL(vin: string, requestId: string): string;
+    vehicleMaintenanceInfoURL(vin: string): string;
+    vehicleTripsUrl(vin: string, longTerm: boolean): string;
 }

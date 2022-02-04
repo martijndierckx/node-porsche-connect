@@ -8,7 +8,7 @@ import { PorscheConnectBase } from './PorscheConnectBase';
 export class WrongCredentialsError extends Error {}
 export class PorscheAuthError extends Error {}
 
-export class PorscheConnectAuth extends PorscheConnectBase {
+export abstract class PorscheConnectAuth extends PorscheConnectBase {
   protected isAuthorized(app: Application): boolean {
     if (this.auths[app.toString()] === undefined) return false;
     if (this.auths[app.toString()].isExpired) return false;
