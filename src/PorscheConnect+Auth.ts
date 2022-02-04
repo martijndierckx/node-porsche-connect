@@ -1,6 +1,8 @@
+import axios from 'axios';
 import * as Crypto from 'crypto';
 import { ApiAuthorization } from './ApiAuthorization';
 import type { Application } from './Application';
+import { PorscheServerError } from './PorscheConnect';
 import { PorscheConnectBase } from './PorscheConnectBase';
 
 export class WrongCredentialsError extends Error {}
@@ -37,6 +39,7 @@ export class PorscheConnectAuth extends PorscheConnectBase {
         throw new WrongCredentialsError();
       }
     } catch (e) {
+      if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
       throw new PorscheAuthError();
     }
   }

@@ -7,6 +7,7 @@ import type { VehicleConfig } from './VehicleTypes';
 
 export class PorscheError extends Error {}
 export class PorscheActionFailedError extends Error {}
+export class PorscheServerError extends Error {}
 
 export class PorscheConnect extends PorscheConnectBase {
   public async getVehicles(): Promise<Vehicle[]> {
@@ -86,6 +87,7 @@ export class PorscheConnect extends PorscheConnectBase {
       let result = await axios.get(url, { headers });
       return result;
     } catch (e) {
+      if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
       throw new PorscheError();
     }
   }
@@ -128,6 +130,7 @@ export class PorscheConnect extends PorscheConnectBase {
       let result = await axios.post(url, body, { headers });
       return result;
     } catch (e) {
+      if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
       throw new PorscheError();
     }
   }

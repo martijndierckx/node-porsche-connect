@@ -7,6 +7,8 @@ export declare class PorscheError extends Error {
 }
 export declare class PorscheActionFailedError extends Error {
 }
+export declare class PorscheServerError extends Error {
+}
 export declare class PorscheConnect extends PorscheConnectBase {
     getVehicles(): Promise<Vehicle[]>;
     getFromApi(app: Application, url: string): Promise<AxiosResponse>;

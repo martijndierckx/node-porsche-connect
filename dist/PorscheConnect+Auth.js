@@ -2,8 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PorscheConnectAuth = exports.PorscheAuthError = exports.WrongCredentialsError = void 0;
 const tslib_1 = require("tslib");
+const axios_1 = (0, tslib_1.__importDefault)(require("axios"));
 const Crypto = (0, tslib_1.__importStar)(require("crypto"));
 const ApiAuthorization_1 = require("./ApiAuthorization");
+const PorscheConnect_1 = require("./PorscheConnect");
 const PorscheConnectBase_1 = require("./PorscheConnectBase");
 class WrongCredentialsError extends Error {
 }
@@ -40,6 +42,8 @@ class PorscheConnectAuth extends PorscheConnectBase_1.PorscheConnectBase {
             }
         }
         catch (e) {
+            if (axios_1.default.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503)
+                throw new PorscheConnect_1.PorscheServerError();
             throw new PorscheAuthError();
         }
     }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PorscheConnect = exports.PorscheActionFailedError = exports.PorscheError = void 0;
+exports.PorscheConnect = exports.PorscheServerError = exports.PorscheActionFailedError = exports.PorscheError = void 0;
 const tslib_1 = require("tslib");
 const axios_1 = (0, tslib_1.__importDefault)(require("axios"));
 const PorscheConnectBase_1 = require("./PorscheConnectBase");
@@ -13,6 +13,9 @@ exports.PorscheError = PorscheError;
 class PorscheActionFailedError extends Error {
 }
 exports.PorscheActionFailedError = PorscheActionFailedError;
+class PorscheServerError extends Error {
+}
+exports.PorscheServerError = PorscheServerError;
 class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
     async getVehicles() {
         const res = await this.getFromApi(Application_1.Application.Portal, this.routes.vehiclesURL);
@@ -82,6 +85,8 @@ class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
             return result;
         }
         catch (e) {
+            if (axios_1.default.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503)
+                throw new PorscheServerError();
             throw new PorscheError();
         }
     }
@@ -120,6 +125,8 @@ class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
             return result;
         }
         catch (e) {
+            if (axios_1.default.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503)
+                throw new PorscheServerError();
             throw new PorscheError();
         }
     }
