@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NotSupportedError = exports.Vehicle = exports.WrongPinError = exports.WrongCredentialsError = exports.PorscheAuthError = exports.PorscheError = void 0;
+exports.NotSupportedError = exports.Vehicle = exports.WrongPinError = exports.WrongCredentialsError = exports.PorscheAuthError = exports.PorscheError = exports.Environment = void 0;
 const tslib_1 = require("tslib");
 const PorscheConnect_1 = require("./PorscheConnect");
 exports.default = PorscheConnect_1.PorscheConnect;
 var PorscheConnectBase_1 = require("./PorscheConnectBase");
+var Environment_1 = require("./Environment");
+Object.defineProperty(exports, "Environment", { enumerable: true, get: function () { return Environment_1.Environment; } });
 var PorscheConnect_2 = require("./PorscheConnect");
 Object.defineProperty(exports, "PorscheError", { enumerable: true, get: function () { return PorscheConnect_2.PorscheError; } });
 var PorscheConnect_Auth_1 = require("./PorscheConnect+Auth");
