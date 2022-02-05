@@ -8,3 +8,4 @@ export { PorscheAuthError, WrongCredentialsError } from './PorscheConnect+Auth';
 export { WrongPinError } from './PorscheConnect+Vehicle';
 export { Vehicle, NotSupportedError } from './Vehicle';
 export * from './VehicleEnums';
+export * from './VehicleTypes';

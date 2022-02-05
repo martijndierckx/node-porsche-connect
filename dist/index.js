@@ -18,4 +18,5 @@ var Vehicle_1 = require("./Vehicle");
 Object.defineProperty(exports, "Vehicle", { enumerable: true, get: function () { return Vehicle_1.Vehicle; } });
 Object.defineProperty(exports, "NotSupportedError", { enumerable: true, get: function () { return Vehicle_1.NotSupportedError; } });
 (0, tslib_1.__exportStar)(require("./VehicleEnums"), exports);
+(0, tslib_1.__exportStar)(require("./VehicleTypes"), exports);
 //# sourceMappingURL=index.js.map
