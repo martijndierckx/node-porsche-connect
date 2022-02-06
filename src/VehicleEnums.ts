@@ -52,7 +52,7 @@ export enum LockState {
 }
 
 export enum ChargingState {
-  On = 'ON',
+  Charging = 'CHARGING',
   Off = 'OFF'
 }
 

@@ -56,7 +56,7 @@ var LockState;
 })(LockState = exports.LockState || (exports.LockState = {}));
 var ChargingState;
 (function (ChargingState) {
-    ChargingState["On"] = "ON";
+    ChargingState["Charging"] = "CHARGING";
     ChargingState["Off"] = "OFF";
 })(ChargingState = exports.ChargingState || (exports.ChargingState = {}));
 var ChargingStatus;
