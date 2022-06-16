@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PorscheConnect = exports.PorscheServerError = exports.PorscheActionFailedError = exports.PorscheError = void 0;
+exports.PorscheConnect = exports.PorscheServerError = exports.PorscheActionFailedError = exports.PorschePrivacyError = exports.PorscheError = void 0;
 const tslib_1 = require("tslib");
 const axios_1 = (0, tslib_1.__importDefault)(require("axios"));
 const PorscheConnectBase_1 = require("./PorscheConnectBase");
@@ -11,6 +11,9 @@ const PorscheConnect_Vehicle_1 = require("./PorscheConnect+Vehicle");
 class PorscheError extends Error {
 }
 exports.PorscheError = PorscheError;
+class PorschePrivacyError extends Error {
+}
+exports.PorschePrivacyError = PorschePrivacyError;
 class PorscheActionFailedError extends Error {
 }
 exports.PorscheActionFailedError = PorscheActionFailedError;
@@ -128,8 +131,14 @@ class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
             return result;
         }
         catch (e) {
-            if (axios_1.default.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503)
-                throw new PorscheServerError();
+            if (axios_1.default.isAxiosError(e) && e.response) {
+                if (e.response.data)
+                    console.log('Porsche error: ', e.response.data);
+                if (e.response.data && e.response.data.pcckErrorKey == 'GRAY_SLICE_ERROR_UNKNOWN_MSG')
+                    throw new PorschePrivacyError();
+                if (e.response.status && e.response.status >= 500 && e.response.status <= 503)
+                    throw new PorscheServerError();
+            }
             throw new PorscheError();
         }
     }

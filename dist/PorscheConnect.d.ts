@@ -5,6 +5,8 @@ import { Vehicle } from './Vehicle';
 import { PorscheConnectVehicle } from './PorscheConnect+Vehicle';
 export declare class PorscheError extends Error {
 }
+export declare class PorschePrivacyError extends Error {
+}
 export declare class PorscheActionFailedError extends Error {
 }
 export declare class PorscheServerError extends Error {

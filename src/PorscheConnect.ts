@@ -7,6 +7,7 @@ import type { VehicleConfig } from './VehicleTypes';
 import { PorscheConnectVehicle } from './PorscheConnect+Vehicle';
 
 export class PorscheError extends Error {}
+export class PorschePrivacyError extends Error {}
 export class PorscheActionFailedError extends Error {}
 export class PorscheServerError extends Error {}
 
@@ -136,8 +137,11 @@ export class PorscheConnect extends PorscheConnectBase {
       let result = await this.client.post(url, body, { headers });
       return result;
     } catch (e) {
-      if (axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503)
-        throw new PorscheServerError();
+      if (axios.isAxiosError(e) && e.response) {
+        if (e.response.data) console.log('Porsche error: ', e.response.data);
+        if (e.response.data && e.response.data.pcckErrorKey == 'GRAY_SLICE_ERROR_UNKNOWN_MSG') throw new PorschePrivacyError();
+        if (e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
+      }
       throw new PorscheError();
     }
   }
