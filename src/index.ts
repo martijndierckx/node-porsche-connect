@@ -3,7 +3,7 @@ export default PorscheConnect;
 
 export { PorscheConnectConfig } from './PorscheConnectBase';
 export { Environment } from './Environment';
-export { PorscheError } from './PorscheConnect';
+export { PorscheError, PorschePrivacyError, PorscheServerError } from './PorscheConnect';
 export { PorscheAuthError, WrongCredentialsError } from './PorscheConnect+Auth';
 export { WrongPinError } from './PorscheConnect+Vehicle';
 export { Vehicle, NotSupportedError } from './Vehicle';
