@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiAuthorization = void 0;
 const tslib_1 = require("tslib");
-const moment_1 = (0, tslib_1.__importDefault)(require("moment"));
-const jsonwebtoken_1 = (0, tslib_1.__importDefault)(require("jsonwebtoken"));
+const moment_1 = tslib_1.__importDefault(require("moment"));
+const jsonwebtoken_1 = tslib_1.__importDefault(require("jsonwebtoken"));
 class ApiAuthorization {
     constructor(accessToken, idToken, expiresIn) {
         this.accessToken = accessToken;

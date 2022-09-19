@@ -3,7 +3,7 @@ export declare class Application {
     readonly clientId: string;
     readonly redirectUrl: string;
     readonly prefix: string;
-    static readonly Portal: Application;
+    static readonly API: Application;
     static readonly Auth: Application;
     static readonly CarControl: Application;
     private constructor();

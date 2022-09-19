@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PorscheConnectBase = void 0;
 const tslib_1 = require("tslib");
 const Routes_1 = require("./Routes");
-const axios_1 = (0, tslib_1.__importDefault)(require("axios"));
-const PersistentAxios = (0, tslib_1.__importStar)(require("axios-cookiejar-support"));
+const axios_1 = tslib_1.__importDefault(require("axios"));
+const PersistentAxios = tslib_1.__importStar(require("axios-cookiejar-support"));
 const tough_cookie_1 = require("tough-cookie");
 const Environment_1 = require("./Environment");
 class PorscheConnectBase {

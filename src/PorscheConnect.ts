@@ -6,10 +6,10 @@ import { Application } from './Application';
 import type { VehicleConfig } from './VehicleTypes';
 import { PorscheConnectVehicle } from './PorscheConnect+Vehicle';
 
-export class PorscheError extends Error {}
-export class PorschePrivacyError extends Error {}
-export class PorscheActionFailedError extends Error {}
-export class PorscheServerError extends Error {}
+export class PorscheError extends Error { }
+export class PorschePrivacyError extends Error { }
+export class PorscheActionFailedError extends Error { }
+export class PorscheServerError extends Error { }
 
 export class PorscheConnect extends PorscheConnectBase {
   public async getVehicles(): Promise<Vehicle[]> {
@@ -82,6 +82,7 @@ export class PorscheConnect extends PorscheConnectBase {
     const auth = await this.authIfRequired(app);
     const headers = {
       Authorization: `Bearer ${auth.accessToken}`,
+      origin: `https://my.porsche.com`,
       apikey: auth.apiKey,
       'x-vrs-url-country': this.env.country,
       'x-vrs-url-language': this.env.locale
@@ -128,6 +129,7 @@ export class PorscheConnect extends PorscheConnectBase {
     const auth = await this.authIfRequired(app);
     const headers = {
       Authorization: `Bearer ${auth.accessToken}`,
+      origin: `https://my.porsche.com`,
       apikey: auth.apiKey,
       'x-vrs-url-country': this.env.country,
       'x-vrs-url-language': this.env.locale
@@ -139,7 +141,7 @@ export class PorscheConnect extends PorscheConnectBase {
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
         if (e.response.data) console.log('Porsche error: ', e.response.data);
-        if (e.response.data && e.response.data.pcckErrorKey == 'GRAY_SLICE_ERROR_UNKNOWN_MSG') throw new PorschePrivacyError();
+        if (e.response.data && e.response.data['pcckErrorKey'] == 'GRAY_SLICE_ERROR_UNKNOWN_MSG') throw new PorschePrivacyError();
         if (e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
       }
       throw new PorscheError();
@@ -147,7 +149,7 @@ export class PorscheConnect extends PorscheConnectBase {
   }
 }
 
-export interface PorscheConnect extends PorscheConnectAuth, PorscheConnectVehicle {}
+export interface PorscheConnect extends PorscheConnectAuth, PorscheConnectVehicle { }
 applyMixins(PorscheConnect, [PorscheConnectAuth, PorscheConnectVehicle]);
 function applyMixins(derivedCtor: any, constructors: any[]) {
   constructors.forEach((baseCtor) => {
