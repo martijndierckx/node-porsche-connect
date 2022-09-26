@@ -6,6 +6,7 @@ import { PorscheServerError } from './PorscheConnect';
 import { PorscheConnectBase } from './PorscheConnectBase';
 
 export class WrongCredentialsError extends Error {}
+export class AccountTemporarilyLocked extends Error {}
 export class PorscheAuthError extends Error {}
 
 export abstract class PorscheConnectAuth extends PorscheConnectBase {
@@ -37,6 +38,9 @@ export abstract class PorscheConnectAuth extends PorscheConnectBase {
       const result = await this.client.post(this.routes.loginAuthURL, formBody, { maxRedirects: 30 });
       if (result.headers['cdn-original-uri'] && result.headers['cdn-original-uri'].includes('state=WRONG_CREDENTIALS')) {
         throw new WrongCredentialsError();
+      }
+      else if(result.headers['cdn-original-uri'] && result.headers['cdn-original-uri'].includes('state=ACCOUNT_TEMPORARILY_LOCKED')) {
+        throw new AccountTemporarilyLocked();
       }
     } catch (e) {
       if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();

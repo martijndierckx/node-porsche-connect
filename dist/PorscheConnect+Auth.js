@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PorscheConnectAuth = exports.PorscheAuthError = exports.WrongCredentialsError = void 0;
+exports.PorscheConnectAuth = exports.PorscheAuthError = exports.AccountTemporarilyLocked = exports.WrongCredentialsError = void 0;
 const tslib_1 = require("tslib");
 const axios_1 = tslib_1.__importDefault(require("axios"));
 const Crypto = tslib_1.__importStar(require("crypto"));
@@ -10,6 +10,9 @@ const PorscheConnectBase_1 = require("./PorscheConnectBase");
 class WrongCredentialsError extends Error {
 }
 exports.WrongCredentialsError = WrongCredentialsError;
+class AccountTemporarilyLocked extends Error {
+}
+exports.AccountTemporarilyLocked = AccountTemporarilyLocked;
 class PorscheAuthError extends Error {
 }
 exports.PorscheAuthError = PorscheAuthError;
@@ -39,6 +42,9 @@ class PorscheConnectAuth extends PorscheConnectBase_1.PorscheConnectBase {
             const result = await this.client.post(this.routes.loginAuthURL, formBody, { maxRedirects: 30 });
             if (result.headers['cdn-original-uri'] && result.headers['cdn-original-uri'].includes('state=WRONG_CREDENTIALS')) {
                 throw new WrongCredentialsError();
+            }
+            else if (result.headers['cdn-original-uri'] && result.headers['cdn-original-uri'].includes('state=ACCOUNT_TEMPORARILY_LOCKED')) {
+                throw new AccountTemporarilyLocked();
             }
         }
         catch (e) {
