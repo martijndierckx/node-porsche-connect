@@ -318,7 +318,7 @@ export type VehicleServices = {
 export type VehicleService = {
   serviceId: string;
   disabled: boolean;
-  disabledReason: string;
+  disabledReason: null | string | 'PRIVACY_MODE';
   dependingServices: string[];
   actionUrl: null | string;
   isConfigurable: null | boolean;
