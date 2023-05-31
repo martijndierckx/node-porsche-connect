@@ -7,7 +7,8 @@ import type {
   VehiclePosition,
   VehicleEMobility,
   VehicleOverview,
-  TripInfo
+  TripInfo,
+  VehicleServices
 } from './VehicleTypes';
 
 export class NotSupportedError extends Error {}
@@ -114,5 +115,13 @@ export class Vehicle {
 
   public async getTripInfo(longTermOverview = false): Promise<TripInfo[]> {
     return await this.porscheConnect.getVehicleTripInfo(this.vin, longTermOverview);
+  }
+
+  public async getServices(): Promise<VehicleServices> {
+    return await this.porscheConnect.getVehicleServices(this.vin);
+  }
+
+  public async isInPrivacyMode(): Promise<boolean> {
+    return await this.porscheConnect.isVehicleInPrivacyMode(this.vin);
   }
 }

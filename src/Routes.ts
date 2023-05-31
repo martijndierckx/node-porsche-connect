@@ -31,6 +31,10 @@ export class Routes {
     return `https://api.porsche.com/service-vehicle/vehicle-summary/${vin}`;
   }
 
+  public vehicleServicesURL(vin: string): string {
+    return `https://api.porsche.com/service-vehicle/service-access/${vin}/details`;
+  }
+
   public vehicleCapabilitiesURL(vin: string): string {
     return `https://api.porsche.com/service-vehicle/vcs/capabilities/${vin}`;
   }

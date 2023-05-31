@@ -1,5 +1,5 @@
 import { PorscheConnectBase } from './PorscheConnectBase';
-import type { VehiclePosition, VehicleEMobility, VehicleOverview, TripInfo } from './VehicleTypes';
+import type { VehiclePosition, VehicleEMobility, VehicleOverview, TripInfo, VehicleServices } from './VehicleTypes';
 
 export class WrongPinError extends Error {}
 
@@ -103,5 +103,15 @@ export abstract class PorscheConnectVehicle extends PorscheConnectBase {
   public async getVehicleTripInfo(vin: string, longTermOverview = false): Promise<TripInfo[]> {
     const res = await this.getFromApi(this.routes.vehicleTripsUrl(vin, longTermOverview));
     return res.data;
+  }
+
+  public async getVehicleServices(vin: string): Promise<VehicleServices> {
+    const res = await this.getFromApi(this.routes.vehicleServicesURL(vin));
+    return res.data;
+  }
+
+  public async isVehicleInPrivacyMode(vin: string): Promise<boolean> {
+    const services = await this.getVehicleServices(vin);
+    return services.vehicleServiceEnabledMap['VSR'] == 'DISABLED';
   }
 }

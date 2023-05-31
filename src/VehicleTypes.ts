@@ -307,3 +307,19 @@ export type TyreInfo = {
   } | null;
   tirePressureDifferenceStatus: 'DIVERGENT' | 'UNKNOWN';
 };
+
+export type VehicleServices = {
+  vehicleServiceEnabledMap: {
+    [service: string]: 'ENABLED' | 'DISABLED' | 'HIDDEN'
+  };
+  serviceAccessDetails: VehicleService[];
+};
+
+export type VehicleService = {
+  serviceId: string;
+  disabled: boolean;
+  disabledReason: string;
+  dependingServices: string[];
+  actionUrl: null | string;
+  isConfigurable: null | boolean;
+};
