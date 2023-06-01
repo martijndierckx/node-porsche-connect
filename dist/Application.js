@@ -18,8 +18,8 @@ class Application {
         });
     }
 }
-exports.Application = Application;
 Application.API = new Application('API', '4mPO3OE5Srjb1iaUGWsbqKBvvesya8oA', 'https://my.porsche.com/core/de/de_DE', 'https://api.porsche.com/core/api/');
 Application.Auth = new Application('Auth', '4mPO3OE5Srjb1iaUGWsbqKBvvesya8oA', 'https://my.porsche.com/core/de/de_DE/', 'https://login.porsche.com');
 Application.CarControl = new Application('CarControl', 'Ux8WmyzsOAGGmvmWnW7GLEjIILHEztAs', 'https://my.porsche.com/myservices/auth/auth.html', 'https://api.porsche.com/');
+exports.Application = Application;
 //# sourceMappingURL=Application.js.map

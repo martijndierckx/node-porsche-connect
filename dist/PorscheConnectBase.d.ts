@@ -3,7 +3,7 @@ import { Routes } from './Routes';
 import { Axios, AxiosResponse } from 'axios';
 import type { ApiAuthorization } from './ApiAuthorization';
 import { Environment } from './Environment';
-export declare type PorscheConnectConfig = {
+export type PorscheConnectConfig = {
     username: string;
     password: string;
     env?: Environment;

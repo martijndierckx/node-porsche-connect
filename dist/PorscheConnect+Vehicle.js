@@ -86,6 +86,14 @@ class PorscheConnectVehicle extends PorscheConnectBase_1.PorscheConnectBase {
         const res = await this.getFromApi(this.routes.vehicleTripsUrl(vin, longTermOverview));
         return res.data;
     }
+    async getVehicleServices(vin) {
+        const res = await this.getFromApi(this.routes.vehicleServicesURL(vin));
+        return res.data;
+    }
+    async isVehicleInPrivacyMode(vin) {
+        const services = await this.getVehicleServices(vin);
+        return services.vehicleServiceEnabledMap['VSR'] == 'DISABLED';
+    }
 }
 exports.PorscheConnectVehicle = PorscheConnectVehicle;
 //# sourceMappingURL=PorscheConnect+Vehicle.js.map

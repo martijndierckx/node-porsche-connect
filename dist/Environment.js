@@ -8,9 +8,9 @@ class Environment {
         this.timeZone = timeZone;
     }
 }
-exports.Environment = Environment;
 //public static readonly ie_EN = new Environment('ie', 'en_IE', 'Europe/Dublin');
 Environment.nl_BE = new Environment('be', 'nl_NL', 'Europe/Brussels');
 Environment.nl_NL = new Environment('nl', 'nl_NL', 'Europe/Amsterdam');
 Environment.de_DE = new Environment('de', 'de_DE', 'Europe/Berlin');
+exports.Environment = Environment;
 //# sourceMappingURL=Environment.js.map

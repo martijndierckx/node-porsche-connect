@@ -8,6 +8,7 @@ export declare class Routes {
     get vehiclesURL(): string;
     vehiclePermissionsURL(vin: string): string;
     vehicleSummaryURL(vin: string): string;
+    vehicleServicesURL(vin: string): string;
     vehicleCapabilitiesURL(vin: string): string;
     vehiclePositionURL(vin: string): string;
     vehicleEmobilityURL(vin: string, carModel: string): string;

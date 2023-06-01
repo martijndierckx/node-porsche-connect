@@ -79,6 +79,12 @@ class Vehicle {
     async getTripInfo(longTermOverview = false) {
         return await this.porscheConnect.getVehicleTripInfo(this.vin, longTermOverview);
     }
+    async getServices() {
+        return await this.porscheConnect.getVehicleServices(this.vin);
+    }
+    async isInPrivacyMode() {
+        return await this.porscheConnect.isVehicleInPrivacyMode(this.vin);
+    }
 }
 exports.Vehicle = Vehicle;
 //# sourceMappingURL=Vehicle.js.map

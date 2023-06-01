@@ -1,6 +1,6 @@
 import type { Moment } from 'moment';
 import type { EngineType, SteeringWheelPosition, PlugState, LockState, ChargingState, ChargingMode, ClimatisationState, ChargingStatus, ChargeTimerFrequency, SpeedUnit, DistanceUnit, DoorStatus, OpenStatus, ParkingBreakStatus, ParkingLightStatus, PressureUnit, FuelType, WindowStatus } from './VehicleEnums';
-export declare type VehicleConfig = {
+export type VehicleConfig = {
     vin: string;
     modelDescription: string;
     modelType: string;
@@ -19,7 +19,7 @@ export declare type VehicleConfig = {
         userRoleStatus: 'ENABLED' | string;
     };
 };
-export declare type VehicleCapabilities = {
+export type VehicleCapabilities = {
     hasRDK?: boolean;
     hasHonkAndFlash?: boolean;
     heating?: {
@@ -27,14 +27,14 @@ export declare type VehicleCapabilities = {
         hasRearSeatHeating?: boolean;
     };
 };
-export declare type VehiclePicture = {
+export type VehiclePicture = {
     width: number;
     height: number;
     url: string;
     view: string;
     transparent: boolean;
 };
-export declare type VehicleEMobility = {
+export type VehicleEMobility = {
     batteryChargeStatus: {
         plugState: PlugState;
         lockState: LockState;
@@ -79,7 +79,7 @@ export declare type VehicleEMobility = {
         profiles: ChargingProfile[];
     };
 };
-export declare type ChargingTimer = {
+export type ChargingTimer = {
     timerID: string;
     departureDateTime: Moment;
     preferredChargingTimeEnabled: boolean;
@@ -102,7 +102,7 @@ export declare type ChargingTimer = {
     e3_CLIMATISATION_TIMER_ID: string;
     climatisationTimer: boolean;
 };
-export declare type ChargingProfile = {
+export type ChargingProfile = {
     chargingOptions: {
         minimumChargeLevel: number;
         preferredChargingEnabled: boolean;
@@ -118,14 +118,14 @@ export declare type ChargingProfile = {
     profileId: number;
     profileName: string;
 };
-export declare type VehiclePosition = {
+export type VehiclePosition = {
     carCoordinate: {
         latitude: number;
         longitude: number;
     };
     heading: number;
 };
-export declare type TripInfo = {
+export type TripInfo = {
     type: 'LONG_TERM' | 'SHORT_TERM';
     id: number;
     averageSpeed: {
@@ -174,7 +174,7 @@ export declare type TripInfo = {
         valueKwhPer100Km: number;
     };
 };
-export declare type VehicleOverview = {
+export type VehicleOverview = {
     batteryLevel: {
         unit: 'PERCENT';
         value: number;
@@ -234,7 +234,7 @@ export declare type VehicleOverview = {
         };
     };
 };
-export declare type Range = {
+export type Range = {
     distance: {
         originalUnit: DistanceUnit;
         originalValue: number;
@@ -245,7 +245,7 @@ export declare type Range = {
     engineType: FuelType;
     isPrimary: boolean;
 };
-export declare type ServiceInterval = {
+export type ServiceInterval = {
     time: {
         unit: 'DAYS';
         value: number;
@@ -258,7 +258,7 @@ export declare type ServiceInterval = {
         valueInKilometers: number;
     } | null;
 };
-export declare type TyreInfo = {
+export type TyreInfo = {
     currentPressure: {
         value: number;
         unit: PressureUnit;
@@ -275,4 +275,18 @@ export declare type TyreInfo = {
         valueInBar: number;
     } | null;
     tirePressureDifferenceStatus: 'DIVERGENT' | 'UNKNOWN';
+};
+export type VehicleServices = {
+    vehicleServiceEnabledMap: {
+        [service: string]: 'ENABLED' | 'DISABLED' | 'HIDDEN';
+    };
+    serviceAccessDetails: VehicleService[];
+};
+export type VehicleService = {
+    serviceId: string;
+    disabled: boolean;
+    disabledReason: null | string | 'PRIVACY_MODE';
+    dependingServices: string[];
+    actionUrl: null | string;
+    isConfigurable: null | boolean;
 };

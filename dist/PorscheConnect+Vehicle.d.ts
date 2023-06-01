@@ -1,5 +1,5 @@
 import { PorscheConnectBase } from './PorscheConnectBase';
-import type { VehiclePosition, VehicleEMobility, VehicleOverview, TripInfo } from './VehicleTypes';
+import type { VehiclePosition, VehicleEMobility, VehicleOverview, TripInfo, VehicleServices } from './VehicleTypes';
 export declare class WrongPinError extends Error {
 }
 export declare abstract class PorscheConnectVehicle extends PorscheConnectBase {
@@ -21,4 +21,6 @@ export declare abstract class PorscheConnectVehicle extends PorscheConnectBase {
     getVehicleCurrentOverview(vin: string): Promise<VehicleOverview>;
     getVehicleMaintenanceInfo(vin: string): Promise<any>;
     getVehicleTripInfo(vin: string, longTermOverview?: boolean): Promise<TripInfo[]>;
+    getVehicleServices(vin: string): Promise<VehicleServices>;
+    isVehicleInPrivacyMode(vin: string): Promise<boolean>;
 }

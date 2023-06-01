@@ -1,5 +1,5 @@
 import { EngineType, SteeringWheelPosition } from './VehicleEnums';
-import type { VehiclePicture, VehicleCapabilities, VehicleConfig, VehiclePosition, VehicleEMobility, VehicleOverview, TripInfo } from './VehicleTypes';
+import type { VehiclePicture, VehicleCapabilities, VehicleConfig, VehiclePosition, VehicleEMobility, VehicleOverview, TripInfo, VehicleServices } from './VehicleTypes';
 export declare class NotSupportedError extends Error {
 }
 export declare class Vehicle {
@@ -35,4 +35,6 @@ export declare class Vehicle {
     getCurrentOverview(): Promise<VehicleOverview>;
     getMaintenanceInfo(): Promise<any>;
     getTripInfo(longTermOverview?: boolean): Promise<TripInfo[]>;
+    getServices(): Promise<VehicleServices>;
+    isInPrivacyMode(): Promise<boolean>;
 }

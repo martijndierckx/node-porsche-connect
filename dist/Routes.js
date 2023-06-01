@@ -23,6 +23,9 @@ class Routes {
     vehicleSummaryURL(vin) {
         return `https://api.porsche.com/service-vehicle/vehicle-summary/${vin}`;
     }
+    vehicleServicesURL(vin) {
+        return `https://api.porsche.com/service-vehicle/service-access/${vin}/details`;
+    }
     vehicleCapabilitiesURL(vin) {
         return `https://api.porsche.com/service-vehicle/vcs/capabilities/${vin}`;
     }
