@@ -6,10 +6,10 @@ import { Application } from './Application';
 import type { VehicleConfig } from './VehicleTypes';
 import { PorscheConnectVehicle } from './PorscheConnect+Vehicle';
 
-export class PorscheError extends Error { }
-export class PorschePrivacyError extends Error { }
-export class PorscheActionFailedError extends Error { }
-export class PorscheServerError extends Error { }
+export class PorscheError extends Error {}
+export class PorschePrivacyError extends Error {}
+export class PorscheActionFailedError extends Error {}
+export class PorscheServerError extends Error {}
 
 export class PorscheConnect extends PorscheConnectBase {
   public async getVehicles(): Promise<Vehicle[]> {
@@ -149,7 +149,7 @@ export class PorscheConnect extends PorscheConnectBase {
   }
 }
 
-export interface PorscheConnect extends PorscheConnectAuth, PorscheConnectVehicle { }
+export interface PorscheConnect extends PorscheConnectAuth, PorscheConnectVehicle {}
 applyMixins(PorscheConnect, [PorscheConnectAuth, PorscheConnectVehicle]);
 function applyMixins(derivedCtor: any, constructors: any[]) {
   constructors.forEach((baseCtor) => {

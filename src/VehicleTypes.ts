@@ -310,7 +310,7 @@ export type TyreInfo = {
 
 export type VehicleServices = {
   vehicleServiceEnabledMap: {
-    [service: string]: 'ENABLED' | 'DISABLED' | 'HIDDEN'
+    [service: string]: 'ENABLED' | 'DISABLED' | 'HIDDEN';
   };
   serviceAccessDetails: VehicleService[];
 };

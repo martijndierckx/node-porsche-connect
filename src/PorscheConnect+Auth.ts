@@ -30,20 +30,22 @@ export abstract class PorscheConnectAuth extends PorscheConnectBase {
     this.auths[app.toString()] = await this.getAccessToken(app, apiAuthCode);
   }
 
-  private async attemptLogin(): Promise<{ code: string, state: string }> {
+  private async attemptLogin(): Promise<{ code: string; state: string }> {
     const app = Application.Auth;
     const loginUrl = this.routes.loginAuthorizeURL(app.clientId, app.redirectUrl);
 
     try {
       const result = await this.client.get(loginUrl, { maxRedirects: 0, validateStatus: null });
-      const authUrl = new URL(result.headers["location"], 'http://127.0.0.1');
+      const authUrl = new URL(result.headers['location'], 'http://127.0.0.1');
 
       const code = authUrl.searchParams.get('code');
       const state = authUrl.searchParams.get('state');
 
-      return { code, state }
-    } catch(e) {
-      if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
+      return { code, state };
+    } catch (e) {
+      if (axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) {
+        throw new PorscheServerError();
+      }
       throw new PorscheAuthError();
     }
   }
@@ -55,10 +57,12 @@ export abstract class PorscheConnectAuth extends PorscheConnectBase {
     let { code, state } = await this.attemptLogin();
 
     // Already have a code, so skip login
-    if(code) { return code; }
+    if (code) {
+      return code;
+    }
 
     // State received?
-    if(!state || state.length <= 0) {
+    if (!state || state.length <= 0) {
       throw new PorscheAuthError('No state returned when trying to login');
     }
 
@@ -87,46 +91,55 @@ export abstract class PorscheConnectAuth extends PorscheConnectBase {
       const hiddenInputs = html.querySelectorAll('input[type=hidden]');
 
       // Capture data from hidden input fields
-      for(const hiddenInput of hiddenInputs) {
+      for (const hiddenInput of hiddenInputs) {
         callbackBody[hiddenInput.attrs.name] = hiddenInput.attrs.value;
       }
     } catch (e) {
-      if(axios.isAxiosError(e) && e.response && e.response.status == 401) throw new WrongCredentialsError();
-      if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
+      if (axios.isAxiosError(e) && e.response && e.response.status == 401) {
+        throw new WrongCredentialsError();
+      } else if (axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) {
+        throw new PorscheServerError();
+      }
       throw new PorscheAuthError();
     }
 
     // Callback key-values received?
-    if(Object.keys(callbackBody).length <= 0) {
+    if (Object.keys(callbackBody).length <= 0) {
       throw new PorscheAuthError('No callback key values received');
     }
 
     // Wait 2 seconds
-    await new Promise(resolve => { setTimeout(resolve, 2500); });
+    await new Promise((resolve) => {
+      setTimeout(resolve, 2500);
+    });
 
     // Callback
     let resumeUrl: string;
     try {
       const result = await this.client.post(this.routes.loginCallbackURL, callbackBody, { maxRedirects: 0, validateStatus: null });
-      resumeUrl = result.headers["location"];
-    } catch(e) {
-      if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
+      resumeUrl = result.headers['location'];
+    } catch (e) {
+      if (axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) {
+        throw new PorscheServerError();
+      }
       throw new PorscheAuthError();
     }
 
     // Did we receive a resume URL?
-    if(!resumeUrl) {
+    if (!resumeUrl) {
       throw new PorscheAuthError('No Auth Resume URL recieved');
     }
 
     // Wait 2 seconds
-    await new Promise(resolve => { setTimeout(resolve, 2500); });
+    await new Promise((resolve) => {
+      setTimeout(resolve, 2500);
+    });
 
     // Get Code
     const res = await this.attemptLogin();
 
     // Already have a code, so skip login
-    if(!res.code) {
+    if (!res.code) {
       throw new PorscheAuthError('No code received');
     }
 
