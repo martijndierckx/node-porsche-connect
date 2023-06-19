@@ -5,14 +5,20 @@ class Routes {
     constructor(locale) {
         this.env = locale;
     }
-    get loginAuthURL() {
-        return `https://login.porsche.com/auth/api/v1/${this.env.country}/${this.env.locale}/public/login`;
+    loginAuthorizeURL(clientId, redirectUri) {
+        return `https://identity.porsche.com/authorize?response_type=code&client_id=${clientId}&code_challenge_method=S256&redirect_uri=${redirectUri}&ui_locales=de-DE&audience=https://api.porsche.com&scope=openid`;
     }
-    get apiAuthURL() {
-        return 'https://login.porsche.com/as/authorization.oauth2';
+    get loginUsernamePasswordURL() {
+        return `https://identity.porsche.com/usernamepassword/login`;
     }
-    get apiTokenURL() {
-        return 'https://login.porsche.com/as/token.oauth2';
+    get loginCallbackURL() {
+        return `https://identity.porsche.com/login/callback`;
+    }
+    get resumeAuthURL() {
+        return `https://identity.porsche.com/`;
+    }
+    get accessTokenURL() {
+        return 'https://identity.porsche.com/oauth/token';
     }
     get vehiclesURL() {
         return `https://api.porsche.com/core/api/v3/${this.env.country}/${this.env.locale}/vehicles`;

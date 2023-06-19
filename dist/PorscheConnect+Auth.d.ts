@@ -1,5 +1,5 @@
 import { ApiAuthorization } from './ApiAuthorization';
-import type { Application } from './Application';
+import { Application } from './Application';
 import { PorscheConnectBase } from './PorscheConnectBase';
 export declare class WrongCredentialsError extends Error {
 }
@@ -11,7 +11,7 @@ export declare abstract class PorscheConnectAuth extends PorscheConnectBase {
     protected isAuthorized(app: Application): boolean;
     protected authIfRequired(app: Application): Promise<ApiAuthorization>;
     private auth;
-    private loginToRetrieveCookies;
-    private getApiAuthCode;
-    private getApiToken;
+    private attemptLogin;
+    private login;
+    private getAccessToken;
 }

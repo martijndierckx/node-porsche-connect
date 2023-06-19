@@ -2,9 +2,11 @@ import type { Environment } from './Environment';
 export declare class Routes {
     private env;
     constructor(locale: Environment);
-    get loginAuthURL(): string;
-    get apiAuthURL(): string;
-    get apiTokenURL(): string;
+    loginAuthorizeURL(clientId: string, redirectUri: string): string;
+    get loginUsernamePasswordURL(): string;
+    get loginCallbackURL(): string;
+    get resumeAuthURL(): string;
+    get accessTokenURL(): string;
     get vehiclesURL(): string;
     vehiclePermissionsURL(vin: string): string;
     vehicleSummaryURL(vin: string): string;

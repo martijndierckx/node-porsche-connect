@@ -3,8 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PorscheConnectAuth = exports.PorscheAuthError = exports.AccountTemporarilyLocked = exports.WrongCredentialsError = void 0;
 const tslib_1 = require("tslib");
 const axios_1 = tslib_1.__importDefault(require("axios"));
-const Crypto = tslib_1.__importStar(require("crypto"));
+const node_html_parser_1 = require("node-html-parser");
 const ApiAuthorization_1 = require("./ApiAuthorization");
+const Application_1 = require("./Application");
 const PorscheConnect_1 = require("./PorscheConnect");
 const PorscheConnectBase_1 = require("./PorscheConnectBase");
 class WrongCredentialsError extends Error {
@@ -31,65 +32,120 @@ class PorscheConnectAuth extends PorscheConnectBase_1.PorscheConnectBase {
         return this.auths[app.toString()];
     }
     async auth(app) {
-        await this.loginToRetrieveCookies();
-        const { apiAuthCode, codeVerifier } = await this.getApiAuthCode(app);
-        this.auths[app.toString()] = await this.getApiToken(app, apiAuthCode, codeVerifier);
+        const apiAuthCode = await this.login();
+        this.auths[app.toString()] = await this.getAccessToken(app, apiAuthCode);
     }
-    async loginToRetrieveCookies() {
-        const loginBody = { username: this.username, password: this.password, keeploggedin: 'false', sec: '', resume: '', thirdPartyId: '', state: '' };
-        const formBody = this.buildPostFormBody(loginBody);
+    async attemptLogin() {
+        const app = Application_1.Application.Auth;
+        const loginUrl = this.routes.loginAuthorizeURL(app.clientId, app.redirectUrl);
         try {
-            const result = await this.client.post(this.routes.loginAuthURL, formBody, { maxRedirects: 30 });
-            if (result.headers['cdn-original-uri'] && result.headers['cdn-original-uri'].includes('state=WRONG_CREDENTIALS')) {
+            const result = await this.client.get(loginUrl, { maxRedirects: 0, validateStatus: null });
+            const authUrl = new URL(result.headers['location'], 'http://127.0.0.1');
+            const code = authUrl.searchParams.get('code');
+            const state = authUrl.searchParams.get('state');
+            return { code, state };
+        }
+        catch (e) {
+            if (axios_1.default.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) {
+                throw new PorscheConnect_1.PorscheServerError();
+            }
+            throw new PorscheAuthError();
+        }
+    }
+    async login() {
+        const app = Application_1.Application.Auth;
+        // Initiate login, and capture state
+        let { code, state } = await this.attemptLogin();
+        // Already have a code, so skip login
+        if (code) {
+            return code;
+        }
+        // State received?
+        if (!state || state.length <= 0) {
+            throw new PorscheAuthError('No state returned when trying to login');
+        }
+        // Authenticate
+        const callbackBody = {};
+        try {
+            const loginBody = {
+                sec: 'high',
+                username: this.username,
+                password: this.password,
+                code_challenge_method: 'S256',
+                redirect_uri: 'https://my.porsche.com/',
+                ui_locales: 'de-DE',
+                audience: 'https://api.porsche.com',
+                client_id: app.clientId,
+                connection: 'Username-Password-Authentication',
+                state: state,
+                tenant: 'porsche-production',
+                response_type: 'code'
+            };
+            const formBody = this.buildPostFormBody(loginBody);
+            const result = await this.client.post(this.routes.loginUsernamePasswordURL, formBody, { maxRedirects: 30 });
+            // Parse HTML
+            const html = (0, node_html_parser_1.parse)(result.data);
+            const hiddenInputs = html.querySelectorAll('input[type=hidden]');
+            // Capture data from hidden input fields
+            for (const hiddenInput of hiddenInputs) {
+                callbackBody[hiddenInput.attrs.name] = hiddenInput.attrs.value;
+            }
+        }
+        catch (e) {
+            if (axios_1.default.isAxiosError(e) && e.response && e.response.status == 401) {
                 throw new WrongCredentialsError();
             }
-            else if (result.headers['cdn-original-uri'] && result.headers['cdn-original-uri'].includes('state=ACCOUNT_TEMPORARILY_LOCKED')) {
-                throw new AccountTemporarilyLocked();
-            }
-        }
-        catch (e) {
-            if (axios_1.default.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503)
+            else if (axios_1.default.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) {
                 throw new PorscheConnect_1.PorscheServerError();
+            }
             throw new PorscheAuthError();
         }
-    }
-    async getApiAuthCode(app) {
-        const codeVerifier = Crypto.randomBytes(32).toString('hex');
-        const codeVerifierSha = Crypto.createHash('sha256').update(codeVerifier).digest('base64');
-        const codeChallenge = codeVerifierSha.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+        // Callback key-values received?
+        if (Object.keys(callbackBody).length <= 0) {
+            throw new PorscheAuthError('No callback key values received');
+        }
+        // Wait 2 seconds
+        await new Promise((resolve) => {
+            setTimeout(resolve, 2500);
+        });
+        // Callback
+        let resumeUrl;
         try {
-            const result = await this.client.get(this.routes.apiAuthURL, {
-                params: {
-                    client_id: app.clientId,
-                    redirect_uri: app.redirectUrl,
-                    code_challenge: codeChallenge,
-                    scope: 'openid',
-                    response_type: 'code',
-                    access_type: 'offline',
-                    prompt: 'none',
-                    code_challenge_method: 'S256'
-                }
-            });
-            const url = new URL(result.headers['cdn-original-uri'], 'http://127.0.0.1');
-            const apiAuthCode = url.searchParams.get('code');
-            return { apiAuthCode, codeVerifier };
+            const result = await this.client.post(this.routes.loginCallbackURL, callbackBody, { maxRedirects: 0, validateStatus: null });
+            resumeUrl = result.headers['location'];
         }
         catch (e) {
+            if (axios_1.default.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) {
+                throw new PorscheConnect_1.PorscheServerError();
+            }
             throw new PorscheAuthError();
         }
+        // Did we receive a resume URL?
+        if (!resumeUrl) {
+            throw new PorscheAuthError('No Auth Resume URL recieved');
+        }
+        // Wait 2 seconds
+        await new Promise((resolve) => {
+            setTimeout(resolve, 2500);
+        });
+        // Get Code
+        const res = await this.attemptLogin();
+        // Already have a code, so skip login
+        if (!res.code) {
+            throw new PorscheAuthError('No code received');
+        }
+        return res.code;
     }
-    async getApiToken(app, code, codeVerifier) {
+    async getAccessToken(app, code) {
         const apiTokenBody = {
             client_id: app.clientId,
             redirect_uri: app.redirectUrl,
             code: code,
-            code_verifier: codeVerifier,
-            prompt: 'none',
             grant_type: 'authorization_code'
         };
         const formBody = this.buildPostFormBody(apiTokenBody);
         try {
-            const result = await this.client.post(this.routes.apiTokenURL, formBody);
+            const result = await this.client.post(this.routes.accessTokenURL, formBody);
             if (result.data.access_token && result.data.id_token && result.data.expires_in) {
                 const auth = new ApiAuthorization_1.ApiAuthorization(result.data.access_token, result.data.id_token, parseInt(result.data.expires_in));
                 return auth;
