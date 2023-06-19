@@ -1,7 +1,7 @@
 import axios from 'axios';
-import * as Crypto from 'crypto';
+import { parse } from 'node-html-parser';
 import { ApiAuthorization } from './ApiAuthorization';
-import type { Application } from './Application';
+import { Application } from './Application';
 import { PorscheServerError } from './PorscheConnect';
 import { PorscheConnectBase } from './PorscheConnectBase';
 
@@ -26,68 +26,124 @@ export abstract class PorscheConnectAuth extends PorscheConnectBase {
   }
 
   private async auth(app: Application) {
-    await this.loginToRetrieveCookies();
-    const { apiAuthCode, codeVerifier } = await this.getApiAuthCode(app);
-    this.auths[app.toString()] = await this.getApiToken(app, apiAuthCode, codeVerifier);
+    const apiAuthCode = await this.login();
+    this.auths[app.toString()] = await this.getAccessToken(app, apiAuthCode);
   }
 
-  private async loginToRetrieveCookies() {
-    const loginBody = { username: this.username, password: this.password, keeploggedin: 'false', sec: '', resume: '', thirdPartyId: '', state: '' };
-    const formBody = this.buildPostFormBody(loginBody);
+  private async attemptLogin(): Promise<{ code: string, state: string }> {
+    const app = Application.Auth;
+    const loginUrl = this.routes.loginAuthorizeURL(app.clientId, app.redirectUrl);
+
     try {
-      const result = await this.client.post(this.routes.loginAuthURL, formBody, { maxRedirects: 30 });
-      if (result.headers['cdn-original-uri'] && result.headers['cdn-original-uri'].includes('state=WRONG_CREDENTIALS')) {
-        throw new WrongCredentialsError();
-      }
-      else if(result.headers['cdn-original-uri'] && result.headers['cdn-original-uri'].includes('state=ACCOUNT_TEMPORARILY_LOCKED')) {
-        throw new AccountTemporarilyLocked();
-      }
-    } catch (e) {
+      const result = await this.client.get(loginUrl, { maxRedirects: 0, validateStatus: null });
+      const authUrl = new URL(result.headers["location"], 'http://127.0.0.1');
+
+      const code = authUrl.searchParams.get('code');
+      const state = authUrl.searchParams.get('state');
+
+      return { code, state }
+    } catch(e) {
       if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
       throw new PorscheAuthError();
     }
   }
 
-  private async getApiAuthCode(app: Application): Promise<{ apiAuthCode: string; codeVerifier: string }> {
-    const codeVerifier = Crypto.randomBytes(32).toString('hex');
-    const codeVerifierSha = Crypto.createHash('sha256').update(codeVerifier).digest('base64');
-    const codeChallenge = codeVerifierSha.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  private async login(): Promise<string> {
+    const app = Application.Auth;
 
+    // Initiate login, and capture state
+    let { code, state } = await this.attemptLogin();
+
+    // Already have a code, so skip login
+    if(code) { return code; }
+
+    // State received?
+    if(!state || state.length <= 0) {
+      throw new PorscheAuthError('No state returned when trying to login');
+    }
+
+    // Authenticate
+    const callbackBody = {};
     try {
-      const result = await this.client.get(this.routes.apiAuthURL, {
-        params: {
-          client_id: app.clientId,
-          redirect_uri: app.redirectUrl,
-          code_challenge: codeChallenge,
-          scope: 'openid',
-          response_type: 'code',
-          access_type: 'offline',
-          prompt: 'none',
-          code_challenge_method: 'S256'
-        }
-      });
-      const url = new URL(result.headers['cdn-original-uri'], 'http://127.0.0.1');
-      const apiAuthCode = url.searchParams.get('code');
+      const loginBody = {
+        sec: 'high',
+        username: this.username,
+        password: this.password,
+        code_challenge_method: 'S256',
+        redirect_uri: 'https://my.porsche.com/',
+        ui_locales: 'de-DE',
+        audience: 'https://api.porsche.com',
+        client_id: app.clientId,
+        connection: 'Username-Password-Authentication',
+        state: state,
+        tenant: 'porsche-production',
+        response_type: 'code'
+      };
+      const formBody = this.buildPostFormBody(loginBody);
+      const result = await this.client.post(this.routes.loginUsernamePasswordURL, formBody, { maxRedirects: 30 });
 
-      return { apiAuthCode, codeVerifier };
+      // Parse HTML
+      const html = parse(result.data);
+      const hiddenInputs = html.querySelectorAll('input[type=hidden]');
+
+      // Capture data from hidden input fields
+      for(const hiddenInput of hiddenInputs) {
+        callbackBody[hiddenInput.attrs.name] = hiddenInput.attrs.value;
+      }
     } catch (e) {
+      if(axios.isAxiosError(e) && e.response && e.response.status == 401) throw new WrongCredentialsError();
+      if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
       throw new PorscheAuthError();
     }
+
+    // Callback key-values received?
+    if(Object.keys(callbackBody).length <= 0) {
+      throw new PorscheAuthError('No callback key values received');
+    }
+
+    // Wait 2 seconds
+    await new Promise(resolve => { setTimeout(resolve, 2500); });
+
+    // Callback
+    let resumeUrl: string;
+    try {
+      const result = await this.client.post(this.routes.loginCallbackURL, callbackBody, { maxRedirects: 0, validateStatus: null });
+      resumeUrl = result.headers["location"];
+    } catch(e) {
+      if(axios.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) throw new PorscheServerError();
+      throw new PorscheAuthError();
+    }
+
+    // Did we receive a resume URL?
+    if(!resumeUrl) {
+      throw new PorscheAuthError('No Auth Resume URL recieved');
+    }
+
+    // Wait 2 seconds
+    await new Promise(resolve => { setTimeout(resolve, 2500); });
+
+    // Get Code
+    const res = await this.attemptLogin();
+
+    // Already have a code, so skip login
+    if(!res.code) {
+      throw new PorscheAuthError('No code received');
+    }
+
+    return res.code;
   }
 
-  private async getApiToken(app: Application, code: string, codeVerifier: string): Promise<ApiAuthorization> {
+  private async getAccessToken(app: Application, code: string): Promise<ApiAuthorization> {
     const apiTokenBody = {
       client_id: app.clientId,
       redirect_uri: app.redirectUrl,
       code: code,
-      code_verifier: codeVerifier,
-      prompt: 'none',
       grant_type: 'authorization_code'
     };
     const formBody = this.buildPostFormBody(apiTokenBody);
 
     try {
-      const result = await this.client.post(this.routes.apiTokenURL, formBody);
+      const result = await this.client.post(this.routes.accessTokenURL, formBody);
       if (result.data.access_token && result.data.id_token && result.data.expires_in) {
         const auth = new ApiAuthorization(result.data.access_token, result.data.id_token, parseInt(result.data.expires_in));
         return auth;

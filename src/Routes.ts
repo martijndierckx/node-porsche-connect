@@ -7,16 +7,24 @@ export class Routes {
     this.env = locale;
   }
 
-  public get loginAuthURL(): string {
-    return `https://login.porsche.com/auth/api/v1/${this.env.country}/${this.env.locale}/public/login`;
+  public loginAuthorizeURL(clientId: string, redirectUri: string): string {
+    return `https://identity.porsche.com/authorize?response_type=code&client_id=${clientId}&code_challenge_method=S256&redirect_uri=${redirectUri}&ui_locales=de-DE&audience=https://api.porsche.com&scope=openid`;
   }
 
-  public get apiAuthURL(): string {
-    return 'https://login.porsche.com/as/authorization.oauth2';
+  public get loginUsernamePasswordURL(): string {
+    return `https://identity.porsche.com/usernamepassword/login`;
   }
 
-  public get apiTokenURL(): string {
-    return 'https://login.porsche.com/as/token.oauth2';
+  public get loginCallbackURL(): string {
+    return `https://identity.porsche.com/login/callback`;
+  }
+
+  public get resumeAuthURL(): string {
+    return `https://identity.porsche.com/`;
+  }
+
+  public get accessTokenURL(): string {
+    return 'https://identity.porsche.com/oauth/token';
   }
 
   public get vehiclesURL(): string {

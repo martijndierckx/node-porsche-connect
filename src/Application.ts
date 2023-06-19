@@ -1,28 +1,39 @@
+const CLIENT_ID = "UYsK00My6bCqJdbQhTQ0PbWmcSdIAMig";
+const REDIRECT_URI = "https://my.porsche.com/";
+
 export class Application {
   public static readonly API = new Application(
     'API',
-    '4mPO3OE5Srjb1iaUGWsbqKBvvesya8oA',
-    'https://my.porsche.com/core/de/de_DE',
+    CLIENT_ID,
+    REDIRECT_URI,
     'https://api.porsche.com/core/api/'
+  );
+  public static readonly Profile = new Application(
+    'Profile',
+    CLIENT_ID,
+    REDIRECT_URI,
+    'https://api.porsche.com/profiles',
+    'QPw3VOLAMfI7r0nmRY8ELq4RzZpZeXEE'
   );
   public static readonly Auth = new Application(
     'Auth',
-    '4mPO3OE5Srjb1iaUGWsbqKBvvesya8oA',
-    'https://my.porsche.com/core/de/de_DE/',
-    'https://login.porsche.com'
+    CLIENT_ID,
+    REDIRECT_URI,
+    'https://identity.porsche.com/'
   );
   public static readonly CarControl = new Application(
     'CarControl',
-    'Ux8WmyzsOAGGmvmWnW7GLEjIILHEztAs',
+    CLIENT_ID,
     'https://my.porsche.com/myservices/auth/auth.html',
-    'https://api.porsche.com/'
+    'https://api.porsche.com/',
   );
 
   private constructor(
     private readonly key: string,
     public readonly clientId: string,
     public readonly redirectUrl: string,
-    public readonly prefix: string
+    public readonly prefix: string,
+    public readonly apiKey?: string
   ) {}
 
   public toString(): string {
@@ -30,7 +41,7 @@ export class Application {
   }
 
   public static getFromUrl(url: string): Application {
-    const list = [Application.API, Application.Auth, Application.CarControl];
+    const list = [Application.API, Application.Auth, Application.Profile, Application.CarControl];
     return list.find((app) => {
       return url.startsWith(app.prefix);
     });
