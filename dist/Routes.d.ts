@@ -3,8 +3,8 @@ export declare class Routes {
     private env;
     constructor(locale: Environment);
     loginAuthorizeURL(clientId: string, redirectUri: string): string;
-    get loginUsernamePasswordURL(): string;
-    get loginCallbackURL(): string;
+    loginIdentifier(state: string): string;
+    loginPassword(state: string): string;
     get resumeAuthURL(): string;
     get accessTokenURL(): string;
     get vehiclesURL(): string;

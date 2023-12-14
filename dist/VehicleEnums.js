@@ -7,95 +7,95 @@ var DoorStatus;
     DoorStatus["ClosedLocked"] = "CLOSED_LOCKED";
     DoorStatus["Open"] = "OPEN";
     DoorStatus["Invalid"] = "INVALID";
-})(DoorStatus = exports.DoorStatus || (exports.DoorStatus = {}));
+})(DoorStatus || (exports.DoorStatus = DoorStatus = {}));
 var OpenStatus;
 (function (OpenStatus) {
     OpenStatus["Closed"] = "CLOSED";
     OpenStatus["Open"] = "Open";
-})(OpenStatus = exports.OpenStatus || (exports.OpenStatus = {}));
+})(OpenStatus || (exports.OpenStatus = OpenStatus = {}));
 var ParkingBreakStatus;
 (function (ParkingBreakStatus) {
     ParkingBreakStatus["Active"] = "ACTIVE";
     ParkingBreakStatus["Unactive"] = "UNACTIVE";
-})(ParkingBreakStatus = exports.ParkingBreakStatus || (exports.ParkingBreakStatus = {}));
+})(ParkingBreakStatus || (exports.ParkingBreakStatus = ParkingBreakStatus = {}));
 var ParkingLightStatus;
 (function (ParkingLightStatus) {
     ParkingLightStatus["On"] = "ON";
     ParkingLightStatus["Off"] = "OFF";
-})(ParkingLightStatus = exports.ParkingLightStatus || (exports.ParkingLightStatus = {}));
+})(ParkingLightStatus || (exports.ParkingLightStatus = ParkingLightStatus = {}));
 var DistanceUnit;
 (function (DistanceUnit) {
     DistanceUnit["Kilometers"] = "KILOMETER";
     DistanceUnit["Miles"] = "MILE";
-})(DistanceUnit = exports.DistanceUnit || (exports.DistanceUnit = {}));
+})(DistanceUnit || (exports.DistanceUnit = DistanceUnit = {}));
 var SpeedUnit;
 (function (SpeedUnit) {
     SpeedUnit["Kmh"] = "KMH";
     SpeedUnit["Mph"] = "MPH";
-})(SpeedUnit = exports.SpeedUnit || (exports.SpeedUnit = {}));
+})(SpeedUnit || (exports.SpeedUnit = SpeedUnit = {}));
 var SteeringWheelPosition;
 (function (SteeringWheelPosition) {
     SteeringWheelPosition["Left"] = "LEFT";
     SteeringWheelPosition["Right"] = "RIGHT";
-})(SteeringWheelPosition = exports.SteeringWheelPosition || (exports.SteeringWheelPosition = {}));
+})(SteeringWheelPosition || (exports.SteeringWheelPosition = SteeringWheelPosition = {}));
 var EngineType;
 (function (EngineType) {
     EngineType["Combustion"] = "COMBUSTION";
     EngineType["BatteryPowered"] = "BEV";
     EngineType["PluginHybrid"] = "PHEV";
-})(EngineType = exports.EngineType || (exports.EngineType = {}));
+})(EngineType || (exports.EngineType = EngineType = {}));
 var PlugState;
 (function (PlugState) {
     PlugState["Connected"] = "CONNECTED";
     PlugState["Disconnected"] = "DISCONNECTED";
-})(PlugState = exports.PlugState || (exports.PlugState = {}));
+})(PlugState || (exports.PlugState = PlugState = {}));
 var LockState;
 (function (LockState) {
     LockState["Locked"] = "LOCKED";
     LockState["Unlocked"] = "UNLOCKED";
-})(LockState = exports.LockState || (exports.LockState = {}));
+})(LockState || (exports.LockState = LockState = {}));
 var ChargingState;
 (function (ChargingState) {
     ChargingState["Charging"] = "CHARGING";
     ChargingState["Off"] = "OFF";
-})(ChargingState = exports.ChargingState || (exports.ChargingState = {}));
+})(ChargingState || (exports.ChargingState = ChargingState = {}));
 var ChargingStatus;
 (function (ChargingStatus) {
     ChargingStatus["NotCharging"] = "NOT_CHARGING";
     ChargingStatus["Charging"] = "CHARGING";
-})(ChargingStatus = exports.ChargingStatus || (exports.ChargingStatus = {}));
+})(ChargingStatus || (exports.ChargingStatus = ChargingStatus = {}));
 var ChargingMode;
 (function (ChargingMode) {
     ChargingMode["On"] = "ON";
     ChargingMode["Off"] = "OFF";
-})(ChargingMode = exports.ChargingMode || (exports.ChargingMode = {}));
+})(ChargingMode || (exports.ChargingMode = ChargingMode = {}));
 var ClimatisationState;
 (function (ClimatisationState) {
     ClimatisationState["On"] = "ON";
     ClimatisationState["Off"] = "OFF";
-})(ClimatisationState = exports.ClimatisationState || (exports.ClimatisationState = {}));
+})(ClimatisationState || (exports.ClimatisationState = ClimatisationState = {}));
 var ChargeTimerFrequency;
 (function (ChargeTimerFrequency) {
     ChargeTimerFrequency["Cyclic"] = "CYCLIC";
     ChargeTimerFrequency["Single"] = "SINGLE";
-})(ChargeTimerFrequency = exports.ChargeTimerFrequency || (exports.ChargeTimerFrequency = {}));
+})(ChargeTimerFrequency || (exports.ChargeTimerFrequency = ChargeTimerFrequency = {}));
 var PressureUnit;
 (function (PressureUnit) {
     PressureUnit["Bar"] = "BAR";
     PressureUnit["Psi"] = "PSI";
-})(PressureUnit = exports.PressureUnit || (exports.PressureUnit = {}));
+})(PressureUnit || (exports.PressureUnit = PressureUnit = {}));
 var FuelType;
 (function (FuelType) {
     FuelType["Gasoline"] = "GASOLINE";
     FuelType["Diesel"] = "Diesel";
     FuelType["Electric"] = "Electric";
     FuelType["Unsupported"] = "UNSUPPORTED";
-})(FuelType = exports.FuelType || (exports.FuelType = {}));
+})(FuelType || (exports.FuelType = FuelType = {}));
 var WindowStatus;
 (function (WindowStatus) {
     WindowStatus["Closed"] = "CLOSED";
     WindowStatus["Open"] = "OPEN";
     WindowStatus["Invalid"] = "INVALID";
     WindowStatus["Unsupported"] = "UNSUPPORTED";
-})(WindowStatus = exports.WindowStatus || (exports.WindowStatus = {}));
+})(WindowStatus || (exports.WindowStatus = WindowStatus = {}));
 //# sourceMappingURL=VehicleEnums.js.map

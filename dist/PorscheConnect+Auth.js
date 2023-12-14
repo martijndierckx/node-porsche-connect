@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PorscheConnectAuth = exports.PorscheAuthError = exports.AccountTemporarilyLocked = exports.WrongCredentialsError = void 0;
 const tslib_1 = require("tslib");
 const axios_1 = tslib_1.__importDefault(require("axios"));
-const node_html_parser_1 = require("node-html-parser");
 const ApiAuthorization_1 = require("./ApiAuthorization");
 const Application_1 = require("./Application");
 const PorscheConnect_1 = require("./PorscheConnect");
@@ -53,7 +52,6 @@ class PorscheConnectAuth extends PorscheConnectBase_1.PorscheConnectBase {
         }
     }
     async login() {
-        const app = Application_1.Application.Auth;
         // Initiate login, and capture state
         let { code, state } = await this.attemptLogin();
         // Already have a code, so skip login
@@ -64,32 +62,29 @@ class PorscheConnectAuth extends PorscheConnectBase_1.PorscheConnectBase {
         if (!state || state.length <= 0) {
             throw new PorscheAuthError('No state returned when trying to login');
         }
+        let resumeUrl;
         // Authenticate
-        const callbackBody = {};
         try {
-            const loginBody = {
-                sec: 'high',
-                username: this.username,
-                password: this.password,
-                code_challenge_method: 'S256',
-                redirect_uri: 'https://my.porsche.com/',
-                ui_locales: 'de-DE',
-                audience: 'https://api.porsche.com',
-                client_id: app.clientId,
-                connection: 'Username-Password-Authentication',
-                state: state,
-                tenant: 'porsche-production',
-                response_type: 'code'
+            const userBody = {
+                "state": state,
+                "username": this.username,
+                "js-available": "true",
+                "webauthn-available": "false",
+                "is-brave": "false",
+                "webauthn-platform-available": "false",
+                "action": "default",
             };
-            const formBody = this.buildPostFormBody(loginBody);
-            const result = await this.client.post(this.routes.loginUsernamePasswordURL, formBody, { maxRedirects: 30 });
-            // Parse HTML
-            const html = (0, node_html_parser_1.parse)(result.data);
-            const hiddenInputs = html.querySelectorAll('input[type=hidden]');
-            // Capture data from hidden input fields
-            for (const hiddenInput of hiddenInputs) {
-                callbackBody[hiddenInput.attrs.name] = hiddenInput.attrs.value;
-            }
+            var formBody = this.buildPostFormBody(userBody);
+            await this.client.post(this.routes.loginIdentifier(state), formBody, { maxRedirects: 30 });
+            const passwordBody = {
+                "state": state,
+                "username": this.username,
+                "password": this.password,
+                "action": "default"
+            };
+            var formBody = this.buildPostFormBody(passwordBody);
+            const passwordResult = await this.client.post(this.routes.loginPassword(state), formBody, { maxRedirects: 0, validateStatus: function (status) { return status >= 200 && status <= 302; } });
+            resumeUrl = passwordResult.headers.location;
         }
         catch (e) {
             if (axios_1.default.isAxiosError(e) && e.response && e.response.status == 401) {
@@ -100,26 +95,10 @@ class PorscheConnectAuth extends PorscheConnectBase_1.PorscheConnectBase {
             }
             throw new PorscheAuthError();
         }
-        // Callback key-values received?
-        if (Object.keys(callbackBody).length <= 0) {
-            throw new PorscheAuthError('No callback key values received');
-        }
         // Wait 2 seconds
         await new Promise((resolve) => {
             setTimeout(resolve, 2500);
         });
-        // Callback
-        let resumeUrl;
-        try {
-            const result = await this.client.post(this.routes.loginCallbackURL, callbackBody, { maxRedirects: 0, validateStatus: null });
-            resumeUrl = result.headers['location'];
-        }
-        catch (e) {
-            if (axios_1.default.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503) {
-                throw new PorscheConnect_1.PorscheServerError();
-            }
-            throw new PorscheAuthError();
-        }
         // Did we receive a resume URL?
         if (!resumeUrl) {
             throw new PorscheAuthError('No Auth Resume URL recieved');
