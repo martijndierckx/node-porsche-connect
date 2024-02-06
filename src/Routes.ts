@@ -8,7 +8,7 @@ export class Routes {
   }
 
   public loginAuthorizeURL(clientId: string, redirectUri: string): string {
-    return `https://identity.porsche.com/authorize?response_type=code&client_id=${clientId}&code_challenge_method=S256&redirect_uri=${redirectUri}&ui_locales=de-DE&audience=https://api.porsche.com&scope=openid%20profile%20email%20pid:user_profile.addresses:read%20pid:user_profile.birthdate:read%20pid:user_profile.dealers:read%20pid:user_profile.emails:read%20pid:user_profile.locale:read%20pid:user_profile.name:read%20pid:user_profile.phones:read%20pid:user_profile.porscheid:read%20pid:user_profile.vehicles:read%20pid:user_profile.vehicles:register`
+    return `https://identity.porsche.com/authorize?response_type=code&client_id=${clientId}&code_challenge_method=S256&redirect_uri=${redirectUri}&ui_locales=${this.env.hyphenatedLocale}&audience=https://api.porsche.com&scope=openid%20profile%20email%20pid:user_profile.addresses:read%20pid:user_profile.birthdate:read%20pid:user_profile.dealers:read%20pid:user_profile.emails:read%20pid:user_profile.locale:read%20pid:user_profile.name:read%20pid:user_profile.phones:read%20pid:user_profile.porscheid:read%20pid:user_profile.vehicles:read%20pid:user_profile.vehicles:register`
   }
 
   public loginIdentifier(state: string): string {

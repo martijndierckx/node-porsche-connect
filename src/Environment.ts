@@ -5,4 +5,8 @@ export class Environment {
   public static readonly de_DE = new Environment('de', 'de_DE', 'Europe/Berlin');
 
   private constructor(public readonly country: string, public readonly locale: string, public readonly timeZone: string) {}
+
+  public get hyphenatedLocale(): string {
+    return this.locale.replace('_','-');
+  }
 }

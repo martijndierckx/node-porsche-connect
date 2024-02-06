@@ -7,6 +7,9 @@ class Environment {
         this.locale = locale;
         this.timeZone = timeZone;
     }
+    get hyphenatedLocale() {
+        return this.locale.replace('_', '-');
+    }
 }
 exports.Environment = Environment;
 //public static readonly ie_EN = new Environment('ie', 'en_IE', 'Europe/Dublin');

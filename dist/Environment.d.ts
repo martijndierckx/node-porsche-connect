@@ -6,4 +6,5 @@ export declare class Environment {
     static readonly nl_NL: Environment;
     static readonly de_DE: Environment;
     private constructor();
+    get hyphenatedLocale(): string;
 }
