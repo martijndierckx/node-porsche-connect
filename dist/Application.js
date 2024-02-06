@@ -21,9 +21,9 @@ class Application {
         });
     }
 }
+exports.Application = Application;
 Application.API = new Application('API', CLIENT_ID, REDIRECT_URI, 'https://api.porsche.com/core/api/');
 Application.Profile = new Application('Profile', CLIENT_ID, REDIRECT_URI, 'https://api.porsche.com/profiles', 'QPw3VOLAMfI7r0nmRY8ELq4RzZpZeXEE');
 Application.Auth = new Application('Auth', CLIENT_ID, REDIRECT_URI, 'https://identity.porsche.com/');
 Application.CarControl = new Application('CarControl', CLIENT_ID, 'https://my.porsche.com/myservices/auth/auth.html', 'https://api.porsche.com/');
-exports.Application = Application;
 //# sourceMappingURL=Application.js.map

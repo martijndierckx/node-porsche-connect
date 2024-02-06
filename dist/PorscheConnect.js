@@ -50,8 +50,8 @@ class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
                         hasRDK: capabilities.hasRDK,
                         hasHonkAndFlash: capabilities.hasHonkAndFlash,
                         heating: {
-                            hasFrontSeatHeating: capabilities.heatingCapabilities.frontSeatHeatingAvailable,
-                            hasRearSeatHeating: capabilities.heatingCapabilities.rearSeatHeatingAvailable
+                            hasFrontSeatHeating: capabilities.heatingCapabilities?.frontSeatHeatingAvailable,
+                            hasRearSeatHeating: capabilities.heatingCapabilities?.rearSeatHeatingAvailable
                         }
                     },
                     permissions: {
@@ -91,8 +91,14 @@ class PorscheConnect extends PorscheConnectBase_1.PorscheConnectBase {
             return result;
         }
         catch (e) {
-            if (axios_1.default.isAxiosError(e) && e.response && e.response.status && e.response.status >= 500 && e.response.status <= 503)
-                throw new PorscheServerError();
+            if (axios_1.default.isAxiosError(e) && e.response) {
+                if (e.response.data)
+                    console.log('Porsche error: ', e.response.data);
+                if (e.response.data && e.response.data['pcckErrorKey'] == 'GRAY_SLICE_ERROR_UNKNOWN_MSG')
+                    throw new PorschePrivacyError();
+                if (e.response.status && e.response.status >= 500 && e.response.status <= 503)
+                    throw new PorscheServerError();
+            }
             throw new PorscheError();
         }
     }
