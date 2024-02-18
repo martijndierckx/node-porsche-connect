@@ -21,6 +21,7 @@ export type VehicleConfig = {
 };
 export type VehicleCapabilities = {
     hasRDK?: boolean;
+    hasDX1: boolean;
     hasHonkAndFlash?: boolean;
     heating?: {
         hasFrontSeatHeating?: boolean;

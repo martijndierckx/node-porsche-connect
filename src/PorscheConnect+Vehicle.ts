@@ -14,20 +14,20 @@ export abstract class PorscheConnectVehicle extends PorscheConnectBase {
     return res.data;
   }
 
-  private async toggleVehicleDirectCharge(vin: string, carModel: string, on: boolean, waitForConfirmation = false) {
-    const res = await this.postToApi(this.routes.vehicleToggleDirectChargingURL(vin, carModel, on));
+  private async toggleVehicleDirectCharge(vin: string, carModel: string, on: boolean, hasDX1: boolean, waitForConfirmation = false) {
+    const res = await this.postToApi(this.routes.vehicleToggleDirectChargingURL(vin, carModel, on, hasDX1));
 
     if (waitForConfirmation) {
-      await this.getStatusFromApi(this.routes.vehicleToggleDirectChargingStatusURL(vin, carModel, res.data.requestId));
+      await this.getStatusFromApi(this.routes.vehicleToggleDirectChargingStatusURL(vin, carModel, on, res.data.requestId));
     }
   }
 
-  public async enableVehicleDirectCharge(vin: string, carModel: string, waitForConfirmation = false) {
-    await this.toggleVehicleDirectCharge(vin, carModel, true, waitForConfirmation);
+  public async enableVehicleDirectCharge(vin: string, carModel: string, hasDX1: boolean, waitForConfirmation = false) {
+    await this.toggleVehicleDirectCharge(vin, carModel, true, hasDX1, waitForConfirmation);
   }
 
-  public async disableVehicleDirectCharge(vin: string, carModel: string, waitForConfirmation = false) {
-    await this.toggleVehicleDirectCharge(vin, carModel, false, waitForConfirmation);
+  public async disableVehicleDirectCharge(vin: string, carModel: string, hasDX1: boolean, waitForConfirmation = false) {
+    await this.toggleVehicleDirectCharge(vin, carModel, false, hasDX1, waitForConfirmation);
   }
 
   private async toggleVehicleClimate(vin: string, on: boolean, waitForConfirmation = false) {

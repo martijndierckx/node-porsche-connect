@@ -14,8 +14,8 @@ export declare class Routes {
     vehicleCapabilitiesURL(vin: string): string;
     vehiclePositionURL(vin: string): string;
     vehicleEmobilityURL(vin: string, carModel: string): string;
-    vehicleToggleDirectChargingURL(vin: string, carModel: string, on: boolean): string;
-    vehicleToggleDirectChargingStatusURL(vin: string, carModel: string, requestId: string): string;
+    vehicleToggleDirectChargingURL(vin: string, carModel: string, on: boolean, hasDX1: boolean): string;
+    vehicleToggleDirectChargingStatusURL(vin: string, carModel: string, on: boolean, requestId: string): string;
     vehicleToggleClimateURL(vin: string, on: boolean): string;
     vehicleToggleClimateStatusURL(vin: string, requestId: string): string;
     vehicleToggleLockedURL(vin: string, lock: boolean): string;

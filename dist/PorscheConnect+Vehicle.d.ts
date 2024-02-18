@@ -6,8 +6,8 @@ export declare abstract class PorscheConnectVehicle extends PorscheConnectBase {
     getVehiclePosition(vin: string): Promise<VehiclePosition>;
     getVehicleEmobilityInfo(vin: string, carModel: string): Promise<VehicleEMobility>;
     private toggleVehicleDirectCharge;
-    enableVehicleDirectCharge(vin: string, carModel: string, waitForConfirmation?: boolean): Promise<void>;
-    disableVehicleDirectCharge(vin: string, carModel: string, waitForConfirmation?: boolean): Promise<void>;
+    enableVehicleDirectCharge(vin: string, carModel: string, hasDX1: boolean, waitForConfirmation?: boolean): Promise<void>;
+    disableVehicleDirectCharge(vin: string, carModel: string, hasDX1: boolean, waitForConfirmation?: boolean): Promise<void>;
     private toggleVehicleClimate;
     enableVehicleClimate(vin: string, waitForConfirmation?: boolean): Promise<void>;
     disableVehicleClimate(vin: string, waitForConfirmation?: boolean): Promise<void>;
