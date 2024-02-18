@@ -14,10 +14,10 @@ class PorscheConnectVehicle extends PorscheConnectBase_1.PorscheConnectBase {
         const res = await this.getFromApi(this.routes.vehicleEmobilityURL(vin, carModel));
         return res.data;
     }
-    async toggleVehicleDirectCharge(vin, carModel, hasDX1, on, waitForConfirmation = false) {
-        const res = await this.postToApi(this.routes.vehicleToggleDirectChargingURL(vin, carModel, hasDX1, on));
+    async toggleVehicleDirectCharge(vin, carModel, on, hasDX1, waitForConfirmation = false) {
+        const res = await this.postToApi(this.routes.vehicleToggleDirectChargingURL(vin, carModel, on, hasDX1));
         if (waitForConfirmation) {
-            await this.getStatusFromApi(this.routes.vehicleToggleDirectChargingStatusURL(vin, carModel, hasDX1, res.data.requestId));
+            await this.getStatusFromApi(this.routes.vehicleToggleDirectChargingStatusURL(vin, carModel, on, res.data.requestId));
         }
     }
     async enableVehicleDirectCharge(vin, carModel, hasDX1, waitForConfirmation = false) {
