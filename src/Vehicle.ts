@@ -62,11 +62,11 @@ export class Vehicle {
   }
 
   public async enableDirectCharge(waitForConfirmation = false) {
-    await this.porscheConnect.enableVehicleDirectCharge(this.vin, this.carModel, waitForConfirmation);
+    await this.porscheConnect.enableVehicleDirectCharge(this.vin, this.carModel, this.remoteCapabilities.hasDX1, waitForConfirmation);
   }
 
   public async disableDirectCharge(waitForConfirmation = false) {
-    await this.porscheConnect.disableVehicleDirectCharge(this.vin, this.carModel, waitForConfirmation);
+    await this.porscheConnect.disableVehicleDirectCharge(this.vin, this.carModel, this.remoteCapabilities.hasDX1, waitForConfirmation);
   }
 
   public async enableClimate(waitForConfirmation = false) {

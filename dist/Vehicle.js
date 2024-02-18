@@ -34,10 +34,10 @@ class Vehicle {
         }
     }
     async enableDirectCharge(waitForConfirmation = false) {
-        await this.porscheConnect.enableVehicleDirectCharge(this.vin, this.carModel, waitForConfirmation);
+        await this.porscheConnect.enableVehicleDirectCharge(this.vin, this.carModel, this.remoteCapabilities.hasDX1, waitForConfirmation);
     }
     async disableDirectCharge(waitForConfirmation = false) {
-        await this.porscheConnect.disableVehicleDirectCharge(this.vin, this.carModel, waitForConfirmation);
+        await this.porscheConnect.disableVehicleDirectCharge(this.vin, this.carModel, this.remoteCapabilities.hasDX1, waitForConfirmation);
     }
     async enableClimate(waitForConfirmation = false) {
         await this.porscheConnect.enableVehicleClimate(this.vin, waitForConfirmation);

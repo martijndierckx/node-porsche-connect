@@ -41,12 +41,12 @@ class Routes {
     vehicleEmobilityURL(vin, carModel) {
         return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${carModel}/${vin}?timezone=${this.env.timeZone}`;
     }
-    vehicleToggleDirectChargingURL(vin, carModel, on) {
+    vehicleToggleDirectChargingURL(vin, carModel, hasDX1, on) {
         const action = on ? 'true' : 'false';
-        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${carModel}/${vin}/toggle-direct-charging/${action}`;
+        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${carModel}/${vin}/toggle-direct-charging/${action}?hasDX1=${hasDX1}`;
     }
-    vehicleToggleDirectChargingStatusURL(vin, carModel, requestId) {
-        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${carModel}/${vin}/toggle-direct-charging/status/${requestId}`;
+    vehicleToggleDirectChargingStatusURL(vin, carModel, hasDX1, requestId) {
+        return `https://api.porsche.com/e-mobility/${this.env.country}/${this.env.locale}/${carModel}/${vin}/toggle-direct-charging/status/${requestId}?hasDX1=${hasDX1}`;
     }
     vehicleToggleClimateURL(vin, on) {
         const action = on ? 'true' : 'false';

@@ -43,6 +43,7 @@ export class PorscheConnect extends PorscheConnectBase {
             nickName: summary.nickName,
             remoteCapabilities: {
               hasRDK: capabilities.hasRDK,
+              hasDX1: capabilities.hasDX1,
               hasHonkAndFlash: capabilities.hasHonkAndFlash,
               heating: {
                 hasFrontSeatHeating: capabilities.heatingCapabilities?.frontSeatHeatingAvailable,
